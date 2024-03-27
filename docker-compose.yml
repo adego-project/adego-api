@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:8.0.36
+    command: 
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --range_optimizer_max_mem_size=16777216
+    restart: always
+    env_file:
+      - .env.db
+    # volumes:
+      # - ./mysql/db:/var/lib/mysql
+      # - /etc/timezone:/etc/timezone:ro
+      # - ./mysql/initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - 3306:3306
