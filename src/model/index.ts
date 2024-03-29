@@ -1,1 +1,2 @@
-export * from './kakao.model';
+export * from './kakao.user.model';
+export * from './google.user.model';

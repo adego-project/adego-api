@@ -1,4 +1,12 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
+import { OAuthTokenDTO } from 'src/dto';
 
-@Controller('google')
-export class GoogleController {}
+@Controller('/oauth/google')
+export class GoogleController {
+    constructor() {}
+
+    @Post('login')
+    async login(@Body() dto: OAuthTokenDTO) {
+        console.log(dto);
+    }
+}
