@@ -37,7 +37,7 @@ export class KakaoService {
     }
 
     async getKakaoUser(access_token: string) {
-        const user: KakaoUserModel = await fetch(process.env.KAKAO_USERINFO_URL as string, {
+        const user: KakaoUserModel = await fetch('https://kapi.kakao.com/v2/user/me', {
             headers: {
                 Authorization: `Bearer ${access_token}`,
             },
