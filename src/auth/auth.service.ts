@@ -1,0 +1,39 @@
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { TokenPayload } from 'src/dto';
+
+@Injectable()
+export class AuthService {
+    constructor(
+        private readonly jwtService: JwtService,
+        private readonly configService: ConfigService,
+    ) {
+        this.createAccessToken('1234').then((a: any) => console.log('access', a));
+        this.createRefreshToken('1234').then((a: any) => console.log('refresh', a));
+    }
+
+    async createTokens(id: string) {
+        const accessToken = await this.createAccessToken(id);
+        const refreshToken = await this.createRefreshToken(id);
+
+        return { accessToken, refreshToken };
+    }
+
+    async createAccessToken(id: string): Promise<string> {
+        const payload: TokenPayload = { id, type: 'access' };
+        return await this.jwtService.signAsync(payload, {
+            secret: this.configService.get<string>('JWT_SECRET'),
+            expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXP'),
+        });
+    }
+
+    async createRefreshToken(id: string): Promise<string> {
+        const payload: TokenPayload = { id, type: 'refresh' };
+
+        return await this.jwtService.signAsync(payload, {
+            secret: this.configService.get<string>('JWT_SECRET'),
+            expiresIn: this.configService.get<string>('JWT_REFRESH_TOKEN_EXP'),
+        });
+    }
+}
