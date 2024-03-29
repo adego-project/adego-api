@@ -1,14 +1,27 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+    ApiBearerAuth,
+    ApiHeader,
+    ApiOkResponse,
+    ApiOperation,
+    ApiTags,
+    ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
     @Get('refresh')
-    @UseGuards(AuthGuard('refresh'))
+    @UseGuards(AuthGuard('refresh')) // Passport
+    // Swagger
+    @ApiHeader({
+        name: 'Authorization',
+        description: 'Bearer {refresh_token}',
+    })
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Access token refresh endpoint' })
     @ApiOkResponse({ description: 'Access token refresh success' })

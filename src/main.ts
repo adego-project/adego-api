@@ -10,7 +10,6 @@ async function bootstrap() {
         .setTitle('ADEGO Auth')
         .setDescription('ADEGO 인증 API 서버')
         .setVersion('1.0.0')
-        .addTag('swagger')
         .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('swagger', app, document);
