@@ -1,9 +1,34 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { AuthService } from 'src/auth/auth.service';
+import { OAuthTokenDTO } from 'src/dto';
 import { GoogleUser } from 'src/model';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class GoogleService {
-    constructor() {}
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly authService: AuthService,
+    ) {}
+
+    async login(dto: OAuthTokenDTO) {
+        const googleUser = await this.getGoogleUser(dto.access_token);
+        const id = `google_${googleUser.sub}`;
+
+        const user = await this.prisma.findUserById(id);
+
+        if (!user) {
+            await this.prisma.userCreate({
+                id,
+                provider: 'google',
+                providerId: googleUser.sub,
+                email: googleUser.email,
+                name: null,
+            });
+        }
+
+        return this.authService.createTokens(id);
+    }
 
     async getGoogleUser(access_token: string) {
         const user: GoogleUser = await fetch(

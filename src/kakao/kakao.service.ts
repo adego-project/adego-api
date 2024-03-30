@@ -15,21 +15,15 @@ export class KakaoService {
         const kakaoUser = await this.getKakaoUser(dto.access_token);
         const id = `kakao_${kakaoUser.id}`;
 
-        const user = await this.prisma.user.findUnique({
-            where: {
-                id,
-            },
-        });
+        const user = await this.prisma.findUserById(id);
 
         if (!user) {
-            await this.prisma.user.create({
-                data: {
-                    id,
-                    provider: 'kakao',
-                    providerId: kakaoUser.id.toString(),
-                    email: kakaoUser.kakao_account.email,
-                    name: null,
-                },
+            await this.prisma.userCreate({
+                id,
+                provider: 'kakao',
+                providerId: kakaoUser.id.toString(),
+                email: null,
+                name: null,
             });
         }
 
