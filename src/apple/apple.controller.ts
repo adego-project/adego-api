@@ -10,8 +10,8 @@ export class AppleController {
 
     @Post('login')
     // Swagger
-    @ApiOperation({ summary: 'Google oAuth login endpoint' })
-    @ApiOkResponse({ description: 'Google oAuth login success' })
+    @ApiOperation({ summary: 'Apple oAuth login endpoint' })
+    @ApiOkResponse({ description: 'Apple oAuth login success' })
     @ApiUnauthorizedResponse({ description: 'Unauthorized (애플 사용자 정보 조회 실패)' })
     async login(@Body() dto: OAuthTokenDTO) {
         return this.appleService.login(dto);
