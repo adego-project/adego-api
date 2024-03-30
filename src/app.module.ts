@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AppController } from './app.controller';
 import { KakaoModule } from './kakao/kakao.module';
 import { GoogleModule } from './google/google.module';
 import { AppleModule } from './apple/apple.module';
@@ -23,7 +23,7 @@ import { AuthModule } from './auth/auth.module';
         }),
         AuthModule,
     ],
-    controllers: [AppController],
     providers: [AppService],
+    controllers: [AppController],
 })
 export class AppModule {}
