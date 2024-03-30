@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { OAuthTokenDTO } from 'src/dto';
-import { KakaoUserModel } from 'src/model';
+import { AuthType, KakaoUserModel } from 'src/model';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class KakaoService {
         if (!user) {
             await this.prisma.userCreate({
                 id,
-                provider: 'kakao',
+                provider: AuthType.kakao,
                 providerId: kakaoUser.id.toString(),
                 email: null,
                 name: null,

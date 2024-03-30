@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { OAuthTokenDTO } from 'src/dto';
-import { GoogleUser } from 'src/model';
+import { AuthType, GoogleUser } from 'src/model';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class GoogleService {
         if (!user) {
             await this.prisma.userCreate({
                 id,
-                provider: 'google',
+                provider: AuthType.google,
                 providerId: googleUser.sub,
                 email: googleUser.email,
                 name: null,
