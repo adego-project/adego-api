@@ -8,10 +8,7 @@ export class AuthService {
     constructor(
         private readonly jwtService: JwtService,
         private readonly configService: ConfigService,
-    ) {
-        this.createAccessToken('1234').then((a: any) => console.log('access', a));
-        this.createRefreshToken('1234').then((a: any) => console.log('refresh', a));
-    }
+    ) {}
 
     async createTokens(id: string) {
         const accessToken = await this.createAccessToken(id);
