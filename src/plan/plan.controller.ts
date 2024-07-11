@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { PlanService } from './plan.service';
 import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -6,7 +6,6 @@ import { CurrentUser } from 'src/decorators/user.decorator';
 import { User } from '@prisma/client';
 import { CreatePlanDTO } from './dto/create-plan.dto';
 import { PlanResponseDTO } from './dto/plan-reponse.dto';
-import { InviteUserDTO } from './dto/invite-user.dto';
 
 @ApiTags('plan')
 @Controller('plan')
@@ -46,13 +45,13 @@ export class PlanController {
         return await this.planService.getInvite(user);
     }
 
-    @Post('invite')
+    @Post('invite/:userId')
     @ApiBearerAuth()
     @UseGuards(AuthGuard('access'))
     @ApiOperation({ summary: 'Invite a user to the plan' })
     @ApiOkResponse({ description: 'User invited', type: PlanResponseDTO })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-    async inviteUser(@CurrentUser() user: User, dto: InviteUserDTO) {
-        return await this.planService.inviteUser(user, dto);
+    async inviteUser(@CurrentUser() user: User, @Param('userId') userId: string) {
+        return await this.planService.inviteUser(user, userId);
     }
 }

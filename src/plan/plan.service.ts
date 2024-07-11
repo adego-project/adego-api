@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InviteStatus, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePlanDTO } from './dto/create-plan.dto';
-import { InviteUserDTO } from './dto/invite-user.dto';
 
 @Injectable()
 export class PlanService {
@@ -69,7 +68,7 @@ export class PlanService {
         return invites;
     }
 
-    async inviteUser({ id }: User, dto: InviteUserDTO) {
+    async inviteUser({ id }: User, userId: string) {
         const user = await this.prisma.user.findUnique({
             where: {
                 id,
@@ -84,7 +83,7 @@ export class PlanService {
 
         const targetUser = await this.prisma.user.findUnique({
             where: {
-                id: dto.userId,
+                id: userId,
             },
             include: {
                 Plan: true,
@@ -96,10 +95,42 @@ export class PlanService {
 
         return await this.prisma.invite.create({
             data: {
-                userId: dto.userId,
+                userId: userId,
                 planId: user.planId,
                 status: InviteStatus.PENDING,
             },
         });
+    }
+
+    async acceptInvite({ id }: User, inviteId: string) {
+        const invite = await this.prisma.invite.findUnique({
+            where: {
+                id: inviteId,
+            },
+            include: {
+                Plan: true,
+                User: true,
+            },
+        });
+
+        if (!invite) throw new HttpException('Invite not found', HttpStatus.NOT_FOUND);
+        if (invite.userId !== id) throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+
+        await this.prisma.user.update({
+            where: {
+                id,
+            },
+            data: {
+                planId: invite.planId,
+            },
+        });
+
+        await this.prisma.invite.deleteMany({
+            where: {
+                userId: id,
+            },
+        });
+
+        return invite.Plan;
     }
 }
