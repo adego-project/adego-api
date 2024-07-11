@@ -9,6 +9,7 @@ import { validate } from './env.validation';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { S3Module } from './s3/s3.module';
+import { PlanModule } from './plan/plan.module';
 
 @Module({
     imports: [
@@ -26,6 +27,7 @@ import { S3Module } from './s3/s3.module';
         AuthModule,
         UserModule,
         S3Module,
+        PlanModule,
     ],
     providers: [AppService],
     controllers: [AppController],

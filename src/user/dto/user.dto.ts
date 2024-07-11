@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
-export class UserResponseDto implements User {
+export class UserResponseDTO implements User {
     @ApiProperty()
     id: string;
 
@@ -16,4 +16,9 @@ export class UserResponseDto implements User {
 
     @ApiProperty()
     name: string;
+
+    @ApiProperty({
+        nullable: true,
+    })
+    planId: string | null;
 }

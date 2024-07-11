@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class RefreshResponseDto {
+export class RefreshResponseDTO {
     @ApiProperty()
     token: string;
 }
 
-export class OAuthResponseDto {
+export class OAuthResponseDTO {
     @ApiProperty()
     accessToken: string;
 

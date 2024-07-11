@@ -14,9 +14,20 @@ datasource db {
 }
 
 model User {
-  id         String @id
+  id         String  @id
   provider   String
   providerId String
   email      String
   name       String
+  Plan       Plan?   @relation(fields: [planId], references: [id])
+  planId     String?
+}
+
+model Plan {
+  id           String @id @default(uuid())
+  name         String
+  placeName    String
+  placeAddress String
+  date         String
+  users        User[]
 }
