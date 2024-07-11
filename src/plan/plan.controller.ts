@@ -5,6 +5,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser } from 'src/decorators/user.decorator';
 import { User } from '@prisma/client';
 import { CreatePlanDTO } from './dto/create-plan.dto';
+import { PlanResponseDTO } from './dto/plan-reponse.dto';
+import { InviteUserDTO } from './dto/invite-user.dto';
 
 @ApiTags('plan')
 @Controller('plan')
@@ -15,9 +17,9 @@ export class PlanController {
     @ApiBearerAuth()
     @UseGuards(AuthGuard('access'))
     @ApiOperation({ summary: 'Get user plan' })
-    @ApiOkResponse({ description: 'User plan' })
+    @ApiOkResponse({ description: 'User plan', type: PlanResponseDTO })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-    async getPlan(@CurrentUser() user: User) {
+    async getPlan(@CurrentUser() user: User): Promise<PlanResponseDTO> {
         return await this.planService.getPlan(user);
     }
 
@@ -28,9 +30,27 @@ export class PlanController {
     })
     @UseGuards(AuthGuard('access'))
     @ApiOperation({ summary: 'Create a plan' })
-    @ApiOkResponse({ description: 'Plan created' })
+    @ApiOkResponse({ description: 'Plan created', type: PlanResponseDTO })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-    async createPlan(@CurrentUser() user: User, @Body() dto: CreatePlanDTO) {
+    async createPlan(@CurrentUser() user: User, @Body() dto: CreatePlanDTO): Promise<PlanResponseDTO> {
         return await this.planService.createPlan(user, dto);
+    }
+
+    @Get('invite')
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard('access'))
+    @ApiOperation({ summary: 'Get plan invite' })
+    @ApiOkResponse({ description: 'Plan invite', type: PlanResponseDTO })
+    @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+    async getInvite() {}
+
+    @Post('invite')
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard('access'))
+    @ApiOperation({ summary: 'Invite a user to the plan' })
+    @ApiOkResponse({ description: 'User invited', type: PlanResponseDTO })
+    @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+    async inviteUser(@CurrentUser() user: User, dto: InviteUserDTO) {
+        return await this.planService.inviteUser(user, dto);
     }
 }

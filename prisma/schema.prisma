@@ -22,6 +22,7 @@ model User {
   UserProfileImage UserProfileImage[]
   Plan             Plan?              @relation(fields: [planId], references: [id])
   planId           String?
+  Invite           Invite[]
 }
 
 model UserProfileImage {
@@ -32,10 +33,26 @@ model UserProfileImage {
 }
 
 model Plan {
-  id           String @id @default(uuid())
+  id           String   @id @default(uuid())
   name         String
   placeName    String
   placeAddress String
   date         String
   users        User[]
+  Invite       Invite[]
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model Invite {
+  id     String       @id @default(uuid())
+  userId String
+  User   User         @relation(fields: [userId], references: [id])
+  planId String
+  Plan   Plan         @relation(fields: [planId], references: [id])
+  status InviteStatus
 }
