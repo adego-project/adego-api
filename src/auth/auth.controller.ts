@@ -21,7 +21,7 @@ export class AuthController {
     // Swagger
     @ApiHeader({
         name: 'Authorization',
-        description: 'Bearer {refresh_token}',
+        description: 'Bearer {refreshToken}',
     })
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Access token refresh endpoint' })

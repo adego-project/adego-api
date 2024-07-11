@@ -17,7 +17,7 @@ export class AppleService {
     ) {}
 
     async login(dto: OAuthTokenDTO) {
-        const appleUser = await this.getAppleUser(dto.access_token);
+        const appleUser = await this.getAppleUser(dto.accessToken);
         const id = `apple_${appleUser.sub}`;
 
         const user = await this.prisma.findUserById(id);

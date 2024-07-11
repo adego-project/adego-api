@@ -7,8 +7,8 @@ export class RefreshResponseDto {
 
 export class OAuthResponseDto {
     @ApiProperty()
-    access_token: string;
+    accessToken: string;
 
     @ApiProperty()
-    refresh_token: string;
+    refreshToken: string;
 }

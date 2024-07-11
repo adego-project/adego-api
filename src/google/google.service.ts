@@ -12,7 +12,7 @@ export class GoogleService {
     ) {}
 
     async login(dto: OAuthTokenDTO) {
-        const googleUser = await this.getGoogleUser(dto.access_token);
+        const googleUser = await this.getGoogleUser(dto.accessToken);
         const id = `google_${googleUser.sub}`;
 
         const user = await this.prisma.findUserById(id);
@@ -30,9 +30,9 @@ export class GoogleService {
         return this.authService.createTokens(id);
     }
 
-    async getGoogleUser(access_token: string) {
+    async getGoogleUser(accessToken: string) {
         const user: GoogleUser = await fetch(
-            `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`,
+            `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${accessToken}`,
         ).then((res) => (res.status === 200 ? res.json() : null));
 
         if (!user) {

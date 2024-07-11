@@ -5,5 +5,5 @@ export class OAuthTokenDTO {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    access_token: string;
+    accessToken: string;
 }

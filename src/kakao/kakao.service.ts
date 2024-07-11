@@ -12,7 +12,7 @@ export class KakaoService {
     ) {}
 
     async login(dto: OAuthTokenDTO) {
-        const kakaoUser = await this.getKakaoUser(dto.access_token);
+        const kakaoUser = await this.getKakaoUser(dto.accessToken);
         const id = `kakao_${kakaoUser.id}`;
 
         const user = await this.prisma.findUserById(id);
@@ -30,10 +30,10 @@ export class KakaoService {
         return this.authService.createTokens(id);
     }
 
-    async getKakaoUser(access_token: string) {
+    async getKakaoUser(accessToken: string) {
         const user: KakaoUserModel = await fetch('https://kapi.kakao.com/v2/user/me', {
             headers: {
-                Authorization: `Bearer ${access_token}`,
+                Authorization: `Bearer ${accessToken}`,
             },
         }).then((res) => (res.status === 200 ? res.json() : null));
 

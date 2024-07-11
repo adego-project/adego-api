@@ -22,7 +22,7 @@ export class UserController {
     @UseGuards(AuthGuard('access'))
     @ApiHeader({
         name: 'Authorization',
-        description: 'Bearer {access_token}',
+        description: 'Bearer {accessToken}',
     })
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Get user information' })
@@ -36,7 +36,7 @@ export class UserController {
     @UseGuards(AuthGuard('access'))
     @ApiHeader({
         name: 'Authorization',
-        description: 'Bearer {access_token}',
+        description: 'Bearer {accessToken}',
     })
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Update user information' })
