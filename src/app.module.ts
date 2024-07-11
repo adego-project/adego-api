@@ -11,12 +11,12 @@ import { UserModule } from './user/user.module';
 import { S3Module } from './s3/s3.module';
 import { PlanModule } from './plan/plan.module';
 import { RedisModule } from './redis/redis.module';
+import { LocationModule } from './location/location.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import { RedisService } from './redis/redis.service';
 
 @Module({
     imports: [
-        KakaoModule,
-        GoogleModule,
-        AppleModule,
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: `.env.${process.env.NODE_ENV}`,
@@ -25,11 +25,16 @@ import { RedisModule } from './redis/redis.module';
                 abortEarly: true,
             },
         }),
+        CacheModule.registerAsync({ isGlobal: true, useClass: RedisService }),
+        KakaoModule,
+        GoogleModule,
+        AppleModule,
         AuthModule,
         UserModule,
         S3Module,
         PlanModule,
         RedisModule,
+        LocationModule,
     ],
     providers: [AppService],
     controllers: [AppController],
