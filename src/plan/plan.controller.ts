@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { PlanService } from './plan.service';
 import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -10,6 +10,16 @@ import { CreatePlanDTO } from './dto/create-plan.dto';
 export class PlanController {
     constructor(private readonly planService: PlanService) {}
 
+    @Get()
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard('access'))
+    @ApiOperation({ summary: 'Get user plan' })
+    @ApiOkResponse({ description: 'User plan' })
+    @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+    async getPlan(@CurrentUser() user: User) {
+        return await this.planService.getPlan(user);
+    }
+
     @Post()
     @ApiBearerAuth()
     @ApiBody({
@@ -20,6 +30,6 @@ export class PlanController {
     @ApiOkResponse({ description: 'Plan created' })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     async createPlan(@CurrentUser() user: User, @Body() dto: CreatePlanDTO) {
-        return this.planService.createPlan(user, dto);
+        return await this.planService.createPlan(user, dto);
     }
 }
