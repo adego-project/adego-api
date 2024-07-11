@@ -21,4 +21,9 @@ export class UserResponseDTO implements User {
         nullable: true,
     })
     planId: string | null;
+
+    @ApiProperty({
+        nullable: true,
+    })
+    profileImage: string | null;
 }
