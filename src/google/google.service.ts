@@ -47,8 +47,6 @@ export class GoogleService {
             throw new UnauthorizedException('A03'); // A03 - 구글 사용자 정보 조회 실패
         }
 
-        console.log(payload);
-
         return payload;
     }
 }
