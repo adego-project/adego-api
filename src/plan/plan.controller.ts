@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
 import { PlanService } from './plan.service';
 import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -63,5 +63,15 @@ export class PlanController {
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     async acceptInvite(@CurrentUser() user: User, @Param('inviteId') inviteId: string) {
         return await this.planService.acceptInvite(user, inviteId);
+    }
+
+    @Delete('invite/:inviteId')
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard('access'))
+    @ApiOperation({ summary: 'Decline a plan invite' })
+    @ApiOkResponse({ description: 'Plan invite reject', type: PlanResponseDTO })
+    @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+    async rejectInvite(@CurrentUser() user: User, @Param('inviteId') inviteId: string) {
+        return await this.planService.rejectInvite(user, inviteId);
     }
 }

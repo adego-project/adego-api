@@ -139,4 +139,27 @@ export class PlanService {
 
         return invite.Plan;
     }
+
+    async rejectInvite({ id }: User, inviteId: string) {
+        const invite = await this.prisma.invite.findUnique({
+            where: {
+                id: inviteId,
+            },
+            include: {
+                Plan: true,
+                User: true,
+            },
+        });
+
+        if (!invite) throw new HttpException('Invite not found', HttpStatus.NOT_FOUND);
+        if (invite.userId !== id) throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+
+        await this.prisma.invite.delete({
+            where: {
+                id: inviteId,
+            },
+        });
+
+        return invite.Plan;
+    }
 }
