@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { S3Module } from './s3/s3.module';
 import { PlanModule } from './plan/plan.module';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
     imports: [
@@ -28,6 +29,7 @@ import { PlanModule } from './plan/plan.module';
         UserModule,
         S3Module,
         PlanModule,
+        RedisModule,
     ],
     providers: [AppService],
     controllers: [AppController],
