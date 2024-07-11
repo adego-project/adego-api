@@ -4,16 +4,16 @@ import { AppController } from './app.controller';
 import { KakaoModule } from './kakao/kakao.module';
 import { GoogleModule } from './google/google.module';
 import { AppleModule } from './apple/apple.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { validate } from './env.validation';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { S3Module } from './s3/s3.module';
 import { PlanModule } from './plan/plan.module';
-import { RedisModule } from './redis/redis.module';
 import { LocationModule } from './location/location.module';
 import { CacheModule } from '@nestjs/cache-manager';
-import { RedisService } from './redis/redis.service';
+import { RedisClientOptions } from 'redis';
+import { redisStore } from 'cache-manager-redis-yet';
 
 @Module({
     imports: [
@@ -25,15 +25,27 @@ import { RedisService } from './redis/redis.service';
                 abortEarly: true,
             },
         }),
-        CacheModule.registerAsync({ isGlobal: true, useClass: RedisService }),
+        CacheModule.registerAsync<RedisClientOptions>({
+            imports: [ConfigModule],
+            isGlobal: true,
+            useFactory: async (config: ConfigService) => ({
+                store: await redisStore({
+                    socket: {
+                        host: config.get('REDIS_HOST'),
+                        port: config.get('REDIS_PORT'),
+                    },
+                }),
+            }),
+            inject: [ConfigService],
+        }),
         KakaoModule,
         GoogleModule,
         AppleModule,
         AuthModule,
         UserModule,
         S3Module,
+        // RedisModule,
         PlanModule,
-        RedisModule,
         LocationModule,
     ],
     providers: [AppService],
