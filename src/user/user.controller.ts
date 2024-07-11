@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -19,6 +19,16 @@ export class UserController {
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     async getUser(@Req() req: any) {
         return await this.userService.findUserById(req.user.id);
+    }
+
+    @Get('/:userId')
+    @UseGuards(AuthGuard('access'))
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Get user information by id' })
+    @ApiOkResponse({ description: 'User information', type: UserResponseDTO })
+    @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+    async getUserById(@Param('userId') userId: string) {
+        return await this.userService.findUserById(userId);
     }
 
     @Patch('/')
