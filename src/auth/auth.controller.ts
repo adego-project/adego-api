@@ -23,7 +23,7 @@ export class AuthController {
     @ApiOperation({ summary: 'Access token refresh endpoint' })
     @ApiOkResponse({ description: 'Access token refresh success', type: RefreshResponseDTO })
     @ApiUnauthorizedResponse({ description: 'Unauthorized (토큰이 없음 / 잘못된 토큰 요청)' })
-    async refresh(@Req() req: any) {
-        return { token: await this.authService.createAccessToken(req.user.id) };
+    async refresh(@Req() req: any): Promise<RefreshResponseDTO> {
+        return { accessToken: await this.authService.createAccessToken(req.user.id) };
     }
 }
