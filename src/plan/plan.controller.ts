@@ -42,7 +42,9 @@ export class PlanController {
     @ApiOperation({ summary: 'Get plan invite' })
     @ApiOkResponse({ description: 'Plan invite', type: PlanResponseDTO })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-    async getInvite() {}
+    async getInvite(@CurrentUser() user: User) {
+        return await this.planService.getInvite(user);
+    }
 
     @Post('invite')
     @ApiBearerAuth()
@@ -51,7 +53,6 @@ export class PlanController {
     @ApiOkResponse({ description: 'User invited', type: PlanResponseDTO })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     async inviteUser(@CurrentUser() user: User, dto: InviteUserDTO) {
-        // return await this.planService.inviteUser(user, dto);
-        return;
+        return await this.planService.inviteUser(user, dto);
     }
 }

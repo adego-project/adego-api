@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { InviteStatus, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePlanDTO } from './dto/create-plan.dto';
 import { InviteUserDTO } from './dto/invite-user.dto';
@@ -63,39 +63,43 @@ export class PlanService {
             },
             include: {
                 Plan: true,
-                User: true,
             },
         });
 
         return invites;
     }
 
-    // async inviteUser({ id }: User, dto: InviteUserDTO) {
-    //     const user = await this.prisma.user.findUnique({
-    //         where: {
-    //             id,
-    //         },
-    //     });
+    async inviteUser({ id }: User, dto: InviteUserDTO) {
+        const user = await this.prisma.user.findUnique({
+            where: {
+                id,
+            },
+            include: {
+                Plan: true,
+            },
+        });
 
-    //     if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        if (!user.Plan) throw new HttpException('User does not have a plan', HttpStatus.BAD_GATEWAY);
 
-    //     const plan = await this.prisma.plan.findFirst({
-    //         where: {
-    //             users: {
-    //                 some: {
-    //                     id,
-    //                 },
-    //             },
-    //         },
-    //     });
+        const targetUser = await this.prisma.user.findUnique({
+            where: {
+                id: dto.userId,
+            },
+            include: {
+                Plan: true,
+            },
+        });
 
-    //     if (!plan) throw new HttpException('User does not have a plan', HttpStatus.NOT_FOUND);
+        if (!targetUser) throw new HttpException('Target user not found', HttpStatus.NOT_FOUND);
+        if (targetUser.planId) throw new HttpException('Target user already has a plan', HttpStatus.BAD_GATEWAY);
 
-    //     // return await this.prisma.invite.create({
-    //     //     data: {
-    //     //         userId: dto.userId,
-    //     //         planId: plan.id,
-    //     //     },
-    //     // });
-    // }
+        return await this.prisma.invite.create({
+            data: {
+                userId: dto.userId,
+                planId: user.planId,
+                status: InviteStatus.PENDING,
+            },
+        });
+    }
 }
