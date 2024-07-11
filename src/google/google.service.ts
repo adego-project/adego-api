@@ -23,7 +23,7 @@ export class GoogleService {
                 provider: AuthType.google,
                 providerId: googleUser.sub,
                 email: googleUser.email,
-                name: null,
+                name: '',
             });
         }
 
