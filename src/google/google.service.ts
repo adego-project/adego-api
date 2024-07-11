@@ -22,8 +22,7 @@ export class GoogleService {
                 id,
                 provider: AuthType.google,
                 providerId: googleUser.sub,
-                email: googleUser.email,
-                name: '',
+                name: null,
             });
         }
 
