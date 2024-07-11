@@ -13,7 +13,7 @@ RUN yarn install
 
 COPY . .
 
-RUN yarn run postinstall
+RUN yarn
 RUN yarn run build
 
 CMD ["yarn", "start:prod"]
