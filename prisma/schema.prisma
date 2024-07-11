@@ -29,16 +29,13 @@ model UserProfileImage {
   userId    String
   User      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
-  Plan      Plan?    @relation(fields: [planId], references: [id])
-  planId    String?
 }
 
 model Plan {
-  id               String             @id @default(uuid())
-  name             String
-  placeName        String
-  placeAddress     String
-  date             String
-  users            User[]
-  UserProfileImage UserProfileImage[]
+  id           String @id @default(uuid())
+  name         String
+  placeName    String
+  placeAddress String
+  date         String
+  users        User[]
 }
