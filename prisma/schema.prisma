@@ -25,10 +25,10 @@ model User {
 }
 
 model UserProfileImage {
-  url       String   @id
-  userId    String
-  User      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
+  url        String   @id
+  userId     String
+  User       User     @relation(fields: [userId], references: [id])
+  uploadedAt DateTime @default(now())
 }
 
 model Plan {
