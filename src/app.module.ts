@@ -14,6 +14,7 @@ import { LocationModule } from './location/location.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { RedisClientOptions } from 'redis';
 import { redisStore } from 'cache-manager-redis-yet';
+import { FirebaseModule } from './firebase/firebase.module';
 
 @Module({
     imports: [
@@ -47,6 +48,7 @@ import { redisStore } from 'cache-manager-redis-yet';
         // RedisModule,
         PlanModule,
         LocationModule,
+        FirebaseModule,
     ],
     providers: [AppService],
     controllers: [AppController],
