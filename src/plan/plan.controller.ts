@@ -1,11 +1,12 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { PlanService } from './plan.service';
-import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser } from 'src/decorators/user.decorator';
 import { User } from '@prisma/client';
 import { CreatePlanDTO } from './dto/create-plan.dto';
 
+@ApiTags('plan')
 @Controller('plan')
 export class PlanController {
     constructor(private readonly planService: PlanService) {}
