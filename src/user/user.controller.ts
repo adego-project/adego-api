@@ -1,13 +1,6 @@
 import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import {
-    ApiBearerAuth,
-    ApiHeader,
-    ApiOkResponse,
-    ApiOperation,
-    ApiTags,
-    ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser } from 'src/decorators/user.decorator';
 import { Prisma, User } from '@prisma/client';
@@ -20,10 +13,6 @@ export class UserController {
 
     @Get('/')
     @UseGuards(AuthGuard('access'))
-    @ApiHeader({
-        name: 'Authorization',
-        description: 'Bearer {accessToken}',
-    })
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Get user information' })
     @ApiOkResponse({ description: 'User information', type: UserResponseDTO })
@@ -34,10 +23,6 @@ export class UserController {
 
     @Patch('/')
     @UseGuards(AuthGuard('access'))
-    @ApiHeader({
-        name: 'Authorization',
-        description: 'Bearer {accessToken}',
-    })
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Update user information' })
     @ApiOkResponse({

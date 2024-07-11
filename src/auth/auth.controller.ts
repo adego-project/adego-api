@@ -19,10 +19,6 @@ export class AuthController {
     @Get('refresh')
     @UseGuards(AuthGuard('refresh')) // Passport
     // Swagger
-    @ApiHeader({
-        name: 'Authorization',
-        description: 'Bearer {refreshToken}',
-    })
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Access token refresh endpoint' })
     @ApiOkResponse({ description: 'Access token refresh success', type: RefreshResponseDTO })
