@@ -36,6 +36,7 @@ export class AppleService {
     }
 
     async getAppleUser(idToken: string) {
+        console.log('🚀 ~ AppleService ~ getAppleUser ~ idToken:', idToken);
         try {
             return this.verifyAppleToken(idToken);
         } catch (e) {
@@ -49,11 +50,16 @@ export class AppleService {
             header: { kid: string; alg: jwt.Algorithm };
             payload: { sub: string };
         };
+        console.log('🚀 ~ AppleService ~ decodedToken ~ decodedToken:', decodedToken);
+
         const keyIdFromToken = decodedToken.header.kid;
+        console.log('🚀 ~ AppleService ~ verifyAppleToken ~ keyIdFromToken:', keyIdFromToken);
 
         const applePublicKeyUrl = 'https://appleid.apple.com/auth/keys';
+        console.log('🚀 ~ AppleService ~ verifyAppleToken ~ applePublicKeyUrl:', applePublicKeyUrl);
 
         const jwksClient = new JwksClient({ jwksUri: applePublicKeyUrl });
+        console.log('🚀 ~ AppleService ~ verifyAppleToken ~ jwksClient:', jwksClient);
 
         const key = await jwksClient.getSigningKey(keyIdFromToken);
         const publicKey = key.getPublicKey();
@@ -61,6 +67,7 @@ export class AppleService {
         const verifiedDecodedToken: AppleJwtTokenPayload = jwt.verify(appleIdToken, publicKey, {
             algorithms: [decodedToken.header.alg],
         }) as AppleJwtTokenPayload;
+        console.log('🚀 ~ AppleService ~ verifyAppleToken ~ verifiedDecodedToken:', verifiedDecodedToken);
 
         return verifiedDecodedToken;
     }
