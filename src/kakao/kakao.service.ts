@@ -22,8 +22,7 @@ export class KakaoService {
                 id,
                 provider: AuthType.kakao,
                 providerId: kakaoUser.id.toString(),
-                email: '',
-                name: '',
+                name: null,
             });
         }
 
