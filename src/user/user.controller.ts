@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -32,5 +32,15 @@ export class UserController {
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     async updateUser(@CurrentUser() user: User, @Body() data: Prisma.UserUpdateInput) {
         return await this.userService.updateUserById(user.id, data);
+    }
+
+    @Post('/profile-image')
+    @UseGuards(AuthGuard('access'))
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Update user profile image' })
+    @ApiOkResponse({ description: 'User profile image updated' })
+    @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+    async updateUserProfileImage(@CurrentUser() user: User, @Body() base64ProfileImage: string) {
+        return await this.userService.updateUserProfileImageById(user.id, base64ProfileImage);
     }
 }
