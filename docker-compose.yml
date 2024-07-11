@@ -1,14 +1,16 @@
 version: '3'
 
 services:
-  auth:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    restart: always
-    env_file:
-      - .env
-    extra_hosts:
-      - host.docker.internal:host-gateway
-    ports:
-      - 49000:3000
+    auth:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        restart: always
+        env_file:
+            - .env
+        extra_hosts:
+            - host.docker.internal:host-gateway
+        ports:
+            - 49000:3000
+    redis:
+        image: 'redis:7.2.5'
