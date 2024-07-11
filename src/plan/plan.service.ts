@@ -40,6 +40,12 @@ export class PlanService {
 
         if (user.Plan) throw new HttpException('User already has a plan', HttpStatus.BAD_GATEWAY);
 
+        await this.prisma.invite.deleteMany({
+            where: {
+                userId: id,
+            },
+        });
+
         return await this.prisma.plan.create({
             data: {
                 ...dto,
