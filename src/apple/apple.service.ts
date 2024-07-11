@@ -27,8 +27,7 @@ export class AppleService {
                 id,
                 provider: AuthType.apple,
                 providerId: appleUser.sub,
-                email: appleUser.email,
-                name: '',
+                name: null,
             });
         }
 
