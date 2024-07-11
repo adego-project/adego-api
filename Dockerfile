@@ -11,10 +11,9 @@ COPY yarn.lock ./
 
 RUN yarn install
 
-RUN npx prisma generate
-
 COPY . .
 
 RUN yarn run build
+RUN yarn run postinstall
 
 CMD ["yarn", "start:prod"]
