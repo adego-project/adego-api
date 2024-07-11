@@ -70,27 +70,32 @@ export class PlanService {
         return invites;
     }
 
-    async inviteUser({ id }: User, dto: InviteUserDTO) {
-        const user = await this.prisma.user.findUnique({
-            where: {
-                id,
-            },
-        });
+    // async inviteUser({ id }: User, dto: InviteUserDTO) {
+    //     const user = await this.prisma.user.findUnique({
+    //         where: {
+    //             id,
+    //         },
+    //     });
 
-        if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    //     if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 
-        const plan = await this.prisma.plan.findFirst({
-            where: {
-                users: {
-                    some: {
-                        id,
-                    },
-                },
-            },
-        });
+    //     const plan = await this.prisma.plan.findFirst({
+    //         where: {
+    //             users: {
+    //                 some: {
+    //                     id,
+    //                 },
+    //             },
+    //         },
+    //     });
 
-        if (!plan) throw new HttpException('User does not have a plan', HttpStatus.NOT_FOUND);
+    //     if (!plan) throw new HttpException('User does not have a plan', HttpStatus.NOT_FOUND);
 
-        const invitedUser = await this.prisma.user.
-    }
+    //     // return await this.prisma.invite.create({
+    //     //     data: {
+    //     //         userId: dto.userId,
+    //     //         planId: plan.id,
+    //     //     },
+    //     // });
+    // }
 }

@@ -51,6 +51,7 @@ export class PlanController {
     @ApiOkResponse({ description: 'User invited', type: PlanResponseDTO })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     async inviteUser(@CurrentUser() user: User, dto: InviteUserDTO) {
-        return await this.planService.inviteUser(user, dto);
+        // return await this.planService.inviteUser(user, dto);
+        return;
     }
 }
