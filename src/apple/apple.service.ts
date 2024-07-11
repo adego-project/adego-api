@@ -3,8 +3,10 @@ import { ConfigService } from '@nestjs/config';
 import { AuthService } from 'src/auth/auth.service';
 import { OAuthTokenDTO } from 'src/dto';
 import { AuthType } from 'src/model';
+import { AppleJwtTokenPayload } from 'src/model/apple.user.model';
 import { PrismaService } from 'src/prisma/prisma.service';
-import verifyAppleToken from 'verify-apple-id-token';
+import * as jwt from 'jsonwebtoken';
+import { JwksClient } from 'jwks-rsa';
 
 @Injectable()
 export class AppleService {
@@ -35,15 +37,31 @@ export class AppleService {
 
     async getAppleUser(idToken: string) {
         try {
-            const user = await verifyAppleToken({
-                idToken,
-                clientId: this.configService.get<string>('APPLE_CLIENT_ID'),
-            });
-
-            return user;
+            return this.verifyAppleToken(idToken);
         } catch (e) {
             console.error('apple', e);
             throw new UnauthorizedException('A04'); // A04 - 애플 사용자 정보 조회 실패
         }
+    }
+
+    async verifyAppleToken(appleIdToken: string): Promise<AppleJwtTokenPayload> {
+        const decodedToken = jwt.decode(appleIdToken, { complete: true }) as {
+            header: { kid: string; alg: jwt.Algorithm };
+            payload: { sub: string };
+        };
+        const keyIdFromToken = decodedToken.header.kid;
+
+        const applePublicKeyUrl = 'https://appleid.apple.com/auth/keys';
+
+        const jwksClient = new JwksClient({ jwksUri: applePublicKeyUrl });
+
+        const key = await jwksClient.getSigningKey(keyIdFromToken);
+        const publicKey = key.getPublicKey();
+
+        const verifiedDecodedToken: AppleJwtTokenPayload = jwt.verify(appleIdToken, publicKey, {
+            algorithms: [decodedToken.header.alg],
+        }) as AppleJwtTokenPayload;
+
+        return verifiedDecodedToken;
     }
 }
