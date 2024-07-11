@@ -18,9 +18,10 @@ export class LocationController {
     })
     @UseGuards(AuthGuard('access'))
     @ApiOperation({ summary: 'Update User Location' })
-    @ApiOkResponse({ description: 'Updated User Location' })
+    @ApiOkResponse({ description: 'Updated User Location', type: Boolean })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     async updateLocation(@CurrentUser() user: User, @Body() dto: UpdateLocationDTO) {
-        return await this.locationService.updateLocationById(user.id, dto);
+        await this.locationService.updateLocationById(user.id, dto);
+        return true;
     }
 }
