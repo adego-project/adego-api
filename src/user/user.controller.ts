@@ -1,4 +1,4 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import {
     ApiBearerAuth,
@@ -9,6 +9,9 @@ import {
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { CurrentUser } from 'src/decorators/user.decorator';
+import { Prisma, User } from '@prisma/client';
+import { UserResponseDto } from './dto/user.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -23,9 +26,26 @@ export class UserController {
     })
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Get user information' })
-    @ApiOkResponse({ description: 'User information' })
+    @ApiOkResponse({ description: 'User information', type: UserResponseDto })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     async getUser(@Req() req: any) {
         return await this.userService.findUserById(req.user.id);
+    }
+
+    @Patch('/')
+    @UseGuards(AuthGuard('access'))
+    @ApiHeader({
+        name: 'Authorization',
+        description: 'Bearer {access_token}',
+    })
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Update user information' })
+    @ApiOkResponse({
+        description: 'User information updated',
+        type: UserResponseDto,
+    })
+    @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+    async updateUser(@CurrentUser() user: User, @Body() data: Prisma.UserUpdateInput) {
+        return await this.userService.updateUserById(user.id, data);
     }
 }
