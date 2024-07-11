@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -52,5 +52,15 @@ export class UserController {
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     async updateUserProfileImage(@CurrentUser() user: User, @Body() base64ProfileImage: string) {
         return await this.userService.updateUserProfileImageById(user.id, base64ProfileImage);
+    }
+
+    @Delete('/')
+    @UseGuards(AuthGuard('access'))
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Delete user' })
+    @ApiOkResponse({ description: 'User deleted', type: UserResponseDTO })
+    @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+    async deleteUser(@CurrentUser() user: User) {
+        return await this.userService.deleteUserById(user.id);
     }
 }
