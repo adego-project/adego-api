@@ -2,6 +2,8 @@ import { Plan, User } from '@prisma/client';
 
 import { ApiProperty } from '@nestjs/swagger';
 
+import { UserResponseDTO } from '../../user/dto/user.dto';
+
 export class PlanResponseDTO implements Plan {
     @ApiProperty()
     id: string;
@@ -18,6 +20,8 @@ export class PlanResponseDTO implements Plan {
     @ApiProperty()
     date: string;
 
-    @ApiProperty()
+    @ApiProperty({
+        type: [UserResponseDTO],
+    })
     users: User[];
 }

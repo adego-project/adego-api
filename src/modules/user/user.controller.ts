@@ -3,7 +3,7 @@ import { CurrentUser } from '~/src/common/decorators/user.decorator';
 
 import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
 import { UploadProfileImageDTO } from './dto/upload-profile-image.dto';
 import { UserResponseDTO } from './dto/user.dto';
