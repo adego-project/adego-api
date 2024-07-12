@@ -2,10 +2,11 @@ import { Prisma, User } from '@prisma/client';
 
 import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
 import { CurrentUser } from 'src/common';
 
+import { UpdateUserDTO } from './dto/update-user.dto';
 import { UploadProfileImageDTO } from './dto/upload-profile-image.dto';
 import { UserResponseDTO } from './dto/user.dto';
 import { UserService } from './user.service';
@@ -38,6 +39,9 @@ export class UserController {
     @Patch('/')
     @UseGuards(AuthGuard('access'))
     @ApiBearerAuth()
+    @ApiBody({
+        type: UpdateUserDTO,
+    })
     @ApiOperation({ summary: 'Update user information' })
     @ApiOkResponse({
         description: 'User information updated',
