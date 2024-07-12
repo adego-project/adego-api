@@ -4,3 +4,4 @@ export * from './location';
 export * from './kakao';
 export * from './plan';
 export * from './user';
+export * from './address';
