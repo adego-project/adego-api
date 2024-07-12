@@ -1,7 +1,7 @@
-import { AuthModule } from '~/src/modules/auth/auth.module';
-import { PrismaModule } from '~/src/modules/prisma/prisma.module';
-
 import { Module } from '@nestjs/common';
+
+import { AuthModule } from 'src/auth';
+import { PrismaModule } from 'src/common';
 
 import { GoogleController } from './google.controller';
 import { GoogleService } from './google.service';

@@ -1,13 +1,12 @@
 import * as jwt from 'jsonwebtoken';
 import { JwksClient } from 'jwks-rsa';
-import { OAuthTokenDTO } from '~/src/common/dto';
-import { AuthType } from '~/src/common/models';
-import { AppleJwtTokenPayload } from '~/src/common/models/apple.user.model';
-import { AuthService } from '~/src/modules/auth/auth.service';
-import { PrismaService } from '~/src/modules/prisma/prisma.service';
 
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+
+import { AuthService } from 'src/auth/auth.service';
+import { AppleJwtTokenPayload, AuthType, OAuthTokenDTO } from 'src/common';
+import { PrismaService } from 'src/common/modules/prisma/prisma.service';
 
 @Injectable()
 export class AppleService {

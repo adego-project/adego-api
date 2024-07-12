@@ -1,7 +1,8 @@
 import { InviteStatus, User } from '@prisma/client';
-import { PrismaService } from '~/src/modules/prisma/prisma.service';
 
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+
+import { PrismaService } from 'src/common/modules/prisma/prisma.service';
 
 import { CreatePlanDTO } from './dto/create-plan.dto';
 

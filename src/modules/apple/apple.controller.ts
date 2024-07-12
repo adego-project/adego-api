@@ -1,8 +1,7 @@
-import { OAuthTokenDTO } from '~/src/common/dto';
-import { OAuthResponseDTO } from '~/src/common/dto/token.dto';
-
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+
+import { OAuthResponseDTO, OAuthTokenDTO } from 'src/common';
 
 import { AppleService } from './apple.service';
 

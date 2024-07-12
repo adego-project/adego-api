@@ -1,8 +1,9 @@
 import { Prisma } from '@prisma/client';
-import { PrismaService } from '~/src/modules/prisma/prisma.service';
-import { S3Service } from '~/src/modules/s3/s3.service';
 
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+
+import { PrismaService } from 'src/common/modules/prisma/prisma.service';
+import { S3Service } from 'src/common/modules/s3/s3.service';
 
 @Injectable()
 export class UserService {

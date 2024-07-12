@@ -1,8 +1,8 @@
-import { RefreshResponseDTO } from '~/src/common/dto/token.dto';
-
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+
+import { RefreshResponseDTO } from 'src/common';
 
 import { AuthService } from './auth.service';
 

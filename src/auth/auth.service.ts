@@ -1,8 +1,8 @@
-import { TokenPayload } from '~/src/common/dto';
-
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+
+import { TokenPayload } from 'src/common';
 
 @Injectable()
 export class AuthService {

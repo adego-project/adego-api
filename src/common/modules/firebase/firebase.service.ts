@@ -1,6 +1,6 @@
 import * as admin from 'firebase-admin';
 import { TopicMessage } from 'firebase-admin/lib/messaging/messaging-api';
-import * as serverAccount from '~/secret/firebase.json';
+import * as serverAccount from 'secret/firebase.json';
 
 import { Injectable } from '@nestjs/common';
 

@@ -1,9 +1,10 @@
 import { User } from '@prisma/client';
-import { CurrentUser } from '~/src/common/decorators/user.decorator';
 
 import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+
+import { CurrentUser } from 'src/common';
 
 import { CreatePlanDTO } from './dto/create-plan.dto';
 import { PlanResponseDTO } from './dto/plan-reponse.dto';

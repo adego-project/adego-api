@@ -4673,6 +4673,11 @@ import-local@^3.0.2:
     pkg-dir "^4.2.0"
     resolve-cwd "^3.0.0"
 
+import-to-array@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/import-to-array/-/import-to-array-1.0.0.tgz#85f9503cb239ab3e88a90c861ce4dcb2251c6f34"
+  integrity sha512-pn/ZUL08U6va4/d51UXwyZqZa7G6bVwCfSIvb3vaOTn7IFW8mI51kcvhOgoTdehcHGjLxa8E2chxDhPJ218bJg==
+
 imurmurhash@^0.1.4:
   version "0.1.4"
   resolved "https://registry.npmjs.org/imurmurhash/-/imurmurhash-0.1.4.tgz"

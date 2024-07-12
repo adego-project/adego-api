@@ -1,20 +1,15 @@
 import { redisStore } from 'cache-manager-redis-yet';
+import importToArray from 'import-to-array';
 import { RedisClientOptions } from 'redis';
 
 import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
-import { validate } from '../common/validators/env.validator';
-import { AppleModule } from '../modules/apple/apple.module';
-import { AuthModule } from '../modules/auth/auth.module';
-import { FirebaseModule } from '../modules/firebase/firebase.module';
-import { GoogleModule } from '../modules/google/google.module';
-import { KakaoModule } from '../modules/kakao/kakao.module';
-import { LocationModule } from '../modules/location/location.module';
-import { PlanModule } from '../modules/plan/plan.module';
-import { S3Module } from '../modules/s3/s3.module';
-import { UserModule } from '../modules/user/user.module';
+import { validate } from 'src/common';
+import * as commonModules from 'src/common/modules';
+import * as modules from 'src/modules';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -41,16 +36,8 @@ import { AppService } from './app.service';
             }),
             inject: [ConfigService],
         }),
-        KakaoModule,
-        GoogleModule,
-        AppleModule,
-        AuthModule,
-        UserModule,
-        S3Module,
-        // RedisModule,
-        PlanModule,
-        LocationModule,
-        FirebaseModule,
+        ...importToArray(modules),
+        ...importToArray(commonModules),
     ],
     providers: [AppService],
     controllers: [AppController],
