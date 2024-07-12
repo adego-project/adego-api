@@ -25,6 +25,30 @@ class EnvironmentVariables {
     @IsString()
     @IsNotEmpty()
     REDIS_PORT: string;
+
+    @IsString()
+    @IsNotEmpty()
+    S3_PUBLIC_URL: string;
+
+    @IsString()
+    @IsNotEmpty()
+    S3_BUCKET_NAME: string;
+
+    @IsString()
+    @IsNotEmpty()
+    S3_REGION: string;
+
+    @IsString()
+    @IsNotEmpty()
+    S3_ACCESS_KEY: string;
+
+    @IsString()
+    @IsNotEmpty()
+    S3_SECRET_KEY: string;
+
+    @IsString()
+    @IsNotEmpty()
+    KAKAO_REST_API_KEY: string;
 }
 
 export function validate(config: Record<string, unknown>) {
