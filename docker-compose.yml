@@ -12,5 +12,8 @@ services:
             - host.docker.internal:host-gateway
         ports:
             - 49000:3000
+        depends_on:
+            - redis
     redis:
         image: 'redis:7.2.5'
+
