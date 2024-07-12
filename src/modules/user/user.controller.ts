@@ -3,8 +3,9 @@ import { CurrentUser } from '~/src/common/decorators/user.decorator';
 
 import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
+import { UploadProfileImageDTO } from './dto/upload-profile-image.dto';
 import { UserResponseDTO } from './dto/user.dto';
 import { UserService } from './user.service';
 
@@ -52,8 +53,8 @@ export class UserController {
     @ApiOperation({ summary: 'Update user profile image' })
     @ApiOkResponse({ description: 'User profile image updated' })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-    async updateUserProfileImage(@CurrentUser() user: User, @Body() base64ProfileImage: string) {
-        return await this.userService.updateUserProfileImageById(user.id, base64ProfileImage);
+    async updateUserProfileImage(@CurrentUser() user: User, @Body() dto: UploadProfileImageDTO) {
+        return await this.userService.updateUserProfileImageById(user.id, dto.profileImage);
     }
 
     @Delete('/')
