@@ -2,7 +2,7 @@ import { IsString } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UpdateLocationDTO {
+export class LocationDTO {
     @ApiProperty({
         example: '33.511111',
     })
