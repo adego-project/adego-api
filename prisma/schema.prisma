@@ -33,13 +33,12 @@ model UserProfileImage {
 }
 
 model Plan {
-  id           String   @id @default(uuid())
-  name         String
-  placeName    String
-  placeAddress String
-  date         String
-  users        User[]
-  Invite       Invite[]
+  id     String   @id @default(uuid())
+  name   String
+  place  String
+  date   String
+  users  User[]
+  Invite Invite[]
 }
 
 enum InviteStatus {

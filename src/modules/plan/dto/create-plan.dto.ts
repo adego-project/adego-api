@@ -14,13 +14,7 @@ export class CreatePlanDTO implements Prisma.PlanCreateInput {
         example: '선린인터넷고등학교',
     })
     @IsString()
-    placeName: string;
-
-    @ApiProperty({
-        example: '서울특별시 용산구 원효로97길 33-4',
-    })
-    @IsString()
-    placeAddress: string;
+    place: string;
 
     @ApiProperty({
         example: '2017-03-16T17:40:00',

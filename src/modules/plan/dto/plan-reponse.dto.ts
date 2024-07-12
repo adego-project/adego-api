@@ -12,10 +12,7 @@ export class PlanResponseDTO implements Plan {
     name: string;
 
     @ApiProperty()
-    placeName: string;
-
-    @ApiProperty()
-    placeAddress: string;
+    place: string;
 
     @ApiProperty()
     date: string;
