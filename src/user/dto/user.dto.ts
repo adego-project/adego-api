@@ -12,9 +12,6 @@ export class UserResponseDTO implements User {
     providerId: string;
 
     @ApiProperty()
-    email: string;
-
-    @ApiProperty()
     name: string;
 
     @ApiProperty({
