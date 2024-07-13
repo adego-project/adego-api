@@ -58,14 +58,14 @@ model Place {
   x       String
   y       String
   planId  String @unique
-  Plan    Plan   @relation(fields: [planId], references: [id])
+  Plan    Plan   @relation(fields: [planId], references: [id], onDelete: Cascade)
 }
 
 model Invite {
   id        String   @id @default(uuid())
   planId    String
-  Plan      Plan     @relation(fields: [planId], references: [id])
+  Plan      Plan     @relation(fields: [planId], references: [id], onDelete: Cascade)
   userId    String   @unique
-  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }
