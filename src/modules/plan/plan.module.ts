@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 
-import { PrismaModule } from 'src/common';
+import { FirebaseModule, PrismaModule } from 'src/common';
 
 import { PlanController } from './plan.controller';
 import { PlanService } from './plan.service';
 
 @Module({
-    imports: [PrismaModule],
+    imports: [PrismaModule, FirebaseModule],
     controllers: [PlanController],
     providers: [PlanService],
     exports: [PlanService],
