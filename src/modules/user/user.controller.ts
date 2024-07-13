@@ -4,7 +4,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Put, Req, UseGuards } from
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
-import { CurrentUser } from 'src/common';
+import { CurrentUser, ResponseDTO } from 'src/common';
 
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { UploadProfileImageDTO } from './dto/upload-profile-image.dto';
@@ -22,7 +22,7 @@ export class UserController {
     @ApiOperation({ summary: 'Get user information' })
     @ApiOkResponse({ description: 'User information', type: UserResponseDTO })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-    async getUser(@Req() req: any) {
+    async getUser(@Req() req: any): Promise<UserResponseDTO> {
         return await this.userService.findUserById(req.user.id);
     }
 
@@ -32,7 +32,7 @@ export class UserController {
     @ApiOperation({ summary: 'Get user information by id' })
     @ApiOkResponse({ description: 'User information', type: UserResponseDTO })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-    async getUserById(@Param('userId') userId: string) {
+    async getUserById(@Param('userId') userId: string): Promise<UserResponseDTO> {
         return await this.userService.findUserById(userId);
     }
 
@@ -45,30 +45,45 @@ export class UserController {
     @ApiOperation({ summary: 'Update user information' })
     @ApiOkResponse({
         description: 'User information updated',
-        type: UserResponseDTO,
+        type: ResponseDTO<null>,
     })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-    async updateUser(@CurrentUser() user: User, @Body() data: Prisma.UserUpdateInput) {
-        return await this.userService.updateUserById(user.id, data);
+    async updateUser(@CurrentUser() user: User, @Body() data: Prisma.UserUpdateInput): Promise<ResponseDTO<null>> {
+        try {
+            await this.userService.updateUserById(user.id, data);
+            return { status: 'success', data: null };
+        } catch (error) {
+            return { status: 'error', data: null };
+        }
     }
 
     @Put('/profile-image')
     @UseGuards(AuthGuard('access'))
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Update user profile image' })
-    @ApiOkResponse({ description: 'User profile image updated' })
+    @ApiOkResponse({ description: 'User profile image updated', type: ResponseDTO<null> })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     async updateUserProfileImage(@CurrentUser() user: User, @Body() dto: UploadProfileImageDTO) {
-        return await this.userService.updateUserProfileImageById(user.id, dto.profileImage);
+        try {
+            await this.userService.updateUserProfileImageById(user.id, dto.profileImage);
+            return { status: 'success', data: null };
+        } catch (error) {
+            return { status: 'error', data: null };
+        }
     }
 
     @Delete('/')
     @UseGuards(AuthGuard('access'))
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Delete user' })
-    @ApiOkResponse({ description: 'User deleted', type: UserResponseDTO })
+    @ApiOkResponse({ description: 'User deleted', type: ResponseDTO<null> })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     async deleteUser(@CurrentUser() user: User) {
-        return await this.userService.deleteUserById(user.id);
+        try {
+            await this.userService.deleteUserById(user.id);
+            return { status: 'success', data: null };
+        } catch (error) {
+            return { status: 'error', data: null };
+        }
     }
 }
