@@ -35,14 +35,20 @@ model UserProfileImage {
   createdAt DateTime @default(now())
 }
 
+enum PlanStatus {
+  WAITING
+  ALARMED
+}
+
 model Plan {
-  id        String   @id @default(uuid())
+  id        String     @id @default(uuid())
   name      String
   date      String
   place     Place?
+  status    PlanStatus @default(WAITING)
   users     User[]
   Invite    Invite[]
-  createdAt DateTime @default(now())
+  createdAt DateTime   @default(now())
 }
 
 model Place {
