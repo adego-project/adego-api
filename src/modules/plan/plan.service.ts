@@ -1,4 +1,4 @@
-import { InviteStatus, Plan, User } from '@prisma/client';
+import { InviteStatus, Plan, PlanStatus, User } from '@prisma/client';
 import { DateTime } from 'luxon';
 
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
@@ -18,7 +18,7 @@ export class PlanService {
         private readonly addressService: AddressService,
     ) {}
 
-    async getPlan(user: User) {
+    async getPlan(user: User): Promise<PlanResponseDTO> {
         const plan = await this.prisma.plan.findFirst({
             where: {
                 users: {
@@ -35,10 +35,10 @@ export class PlanService {
 
         if (!plan) throw new HttpException('User does not have a plan', HttpStatus.NOT_FOUND);
 
-        return plan;
+        return { ...plan, isAlarmAvailable: await this.isAlarmAvailable(plan.date) };
     }
 
-    async createPlan({ id }: User, dto: CreatePlanDTO) {
+    async createPlan({ id }: User, dto: CreatePlanDTO): Promise<PlanResponseDTO> {
         const user = await this.prisma.user.findUnique({
             where: {
                 id,
@@ -59,29 +59,32 @@ export class PlanService {
 
         const place = await this.addressService.getAddressByKeyword(dto.address);
 
-        return await this.prisma.plan.create({
-            data: {
-                date: dto.date,
-                name: dto.name,
-                users: {
-                    connect: {
-                        id,
+        return {
+            ...(await this.prisma.plan.create({
+                data: {
+                    date: dto.date,
+                    name: dto.name,
+                    users: {
+                        connect: {
+                            id,
+                        },
+                    },
+                    place: {
+                        create: {
+                            address: dto.address,
+                            name: place.documents[0].place_name,
+                            x: place.documents[0].x,
+                            y: place.documents[0].y,
+                        },
                     },
                 },
-                place: {
-                    create: {
-                        address: dto.address,
-                        name: place.documents[0].place_name,
-                        x: place.documents[0].x,
-                        y: place.documents[0].y,
-                    },
+                include: {
+                    users: true,
+                    place: true,
                 },
-            },
-            include: {
-                users: true,
-                place: true,
-            },
-        });
+            })),
+            isAlarmAvailable: await this.isAlarmAvailable(dto.date),
+        };
     }
 
     async deletePlan({ id }: User): Promise<PlanResponseDTO> {
@@ -135,7 +138,7 @@ export class PlanService {
                       },
                   });
 
-        return res;
+        return { ...res, isAlarmAvailable: await this.isAlarmAvailable(res.date) };
     }
 
     async getInvite({ id }: User) {
@@ -240,7 +243,11 @@ export class PlanService {
         return invite.Plan;
     }
 
-    async sendAlarm(user: User, plan: Plan, targetUserId: string) {
+    async isAlarmAvailable(date: string) {
+        return Math.abs(DateTime.fromISO(date).diffNow('minutes').minutes) <= 30;
+    }
+
+    async sendAlarmManual(user: User, plan: Plan, targetUserId: string) {
         const targetUser = await this.prisma.user.findUnique({
             where: {
                 id: targetUserId,
@@ -250,7 +257,7 @@ export class PlanService {
         if (targetUser.planId !== plan.id)
             throw new HttpException('User is not in the same plan', HttpStatus.BAD_GATEWAY);
 
-        if (!(Math.abs(DateTime.fromISO(plan.date).diffNow('minutes').minutes) <= 30))
+        if (!this.isAlarmAvailable(plan.date))
             throw new HttpException('Plan is not in 30 minutes', HttpStatus.BAD_REQUEST);
 
         const targetUserFCMToken = targetUser.FCMToken;
@@ -265,5 +272,38 @@ export class PlanService {
         if (!fcmRes) throw new HttpException('Failed to send FCM', HttpStatus.INTERNAL_SERVER_ERROR);
 
         return true;
+    }
+
+    async sendAlarmAuto() {
+        const plans = await this.prisma.plan.findMany({
+            where: {
+                status: PlanStatus.WAITING,
+            },
+            include: {
+                users: true,
+            },
+        });
+
+        for (const plan of plans) {
+            if (this.isAlarmAvailable(plan.date)) {
+                for (const user of plan.users) {
+                    const fcmRes = this.firebase.sendNotificationByToken({
+                        title: '약속 시간이 얼마 남지 않았어요!',
+                        body: '빨리 약속에 참석해주세요!',
+                        token: user.FCMToken,
+                    });
+                    if (!fcmRes) throw new HttpException('Failed to send FCM', HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+
+                await this.prisma.plan.update({
+                    where: {
+                        id: plan.id,
+                    },
+                    data: {
+                        status: PlanStatus.ALARMED,
+                    },
+                });
+            }
+        }
     }
 }
