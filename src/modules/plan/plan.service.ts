@@ -3,13 +3,17 @@ import { DateTime } from 'luxon';
 
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
+import { FirebaseService } from 'src/common/modules/firebase/firebase.service';
 import { PrismaService } from 'src/common/modules/prisma/prisma.service';
 
 import { CreatePlanDTO } from './dto/create-plan.dto';
 
 @Injectable()
 export class PlanService {
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly firebase: FirebaseService,
+    ) {}
 
     async getPlan(user: User) {
         const plan = await this.prisma.plan.findFirst({
@@ -173,7 +177,6 @@ export class PlanService {
                 id: targetUserId,
             },
         });
-
         if (!targetUser) throw new HttpException('Target user not found', HttpStatus.NOT_FOUND);
         if (targetUser.planId !== plan.id)
             throw new HttpException('User is not in the same plan', HttpStatus.BAD_GATEWAY);
@@ -181,6 +184,17 @@ export class PlanService {
         if (!(Math.abs(DateTime.fromISO(plan.date).diffNow('minutes').minutes) <= 30))
             throw new HttpException('Plan is not in 30 minutes', HttpStatus.BAD_REQUEST);
 
-        // Send alarm
+        const targetUserFCMToken = targetUser.FCMToken;
+        if (!targetUserFCMToken)
+            throw new HttpException('Target user does not have an FCM token', HttpStatus.BAD_REQUEST);
+
+        const fcmRes = this.firebase.sendNotificationByToken({
+            title: `${user.name}님이 알림을 울렸어요!`,
+            body: '빨리 약속에 참석해주세요!',
+            token: targetUserFCMToken,
+        });
+        if (!fcmRes) throw new HttpException('Failed to send FCM', HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return true;
     }
 }
