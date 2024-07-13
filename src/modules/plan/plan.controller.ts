@@ -7,7 +7,7 @@ import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiTags, ApiUnauth
 import { CurrentUser } from 'src/common';
 
 import { CreatePlanDTO } from './dto/create-plan.dto';
-import { PlanResponseDTO } from './dto/plan-reponse.dto';
+import { PlanResponseDTO } from './dto/plan-response.dto';
 import { PlanService } from './plan.service';
 
 @ApiTags('plan')
@@ -36,6 +36,16 @@ export class PlanController {
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     async createPlan(@CurrentUser() user: User, @Body() dto: CreatePlanDTO): Promise<PlanResponseDTO> {
         return await this.planService.createPlan(user, dto);
+    }
+
+    @Delete()
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard('access'))
+    @ApiOperation({ summary: 'Delete a plan' })
+    @ApiOkResponse({ description: 'Plan deleted', type: PlanResponseDTO })
+    @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+    async deletePlan(@CurrentUser() user: User): Promise<PlanResponseDTO> {
+        return await this.planService.deletePlan(user);
     }
 
     @Get('invite')

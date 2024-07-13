@@ -2,7 +2,7 @@ import { Plan, User } from '@prisma/client';
 
 import { ApiProperty } from '@nestjs/swagger';
 
-import { UserResponseDTO } from '../../user/dto/user.dto';
+import { UserResponseDTO } from 'src/modules/user/dto/user.dto';
 
 export class PlanResponseDTO implements Plan {
     @ApiProperty()

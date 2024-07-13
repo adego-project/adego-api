@@ -7,6 +7,7 @@ import { FirebaseService } from 'src/common/modules/firebase/firebase.service';
 import { PrismaService } from 'src/common/modules/prisma/prisma.service';
 
 import { CreatePlanDTO } from './dto/create-plan.dto';
+import { PlanResponseDTO } from './dto/plan-response.dto';
 
 @Injectable()
 export class PlanService {
@@ -67,6 +68,58 @@ export class PlanService {
                 users: true,
             },
         });
+    }
+
+    async deletePlan({ id }: User): Promise<PlanResponseDTO> {
+        const user = await this.prisma.user.findUnique({
+            where: {
+                id,
+            },
+        });
+
+        const plan = await this.prisma.plan.findFirst({
+            where: {
+                users: {
+                    some: {
+                        id,
+                    },
+                },
+            },
+            include: {
+                users: true,
+            },
+        });
+
+        if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        if (!plan) throw new HttpException('User does not have a plan', HttpStatus.BAD_GATEWAY);
+
+        const res =
+            plan.users.length === 1
+                ? await this.prisma.plan.delete({
+                      where: {
+                          id: plan.id,
+                      },
+                      include: {
+                          users: true,
+                      },
+                  })
+                : await this.prisma.plan.update({
+                      where: {
+                          id: plan.id,
+                      },
+                      data: {
+                          users: {
+                              disconnect: {
+                                  id,
+                              },
+                          },
+                      },
+                      include: {
+                          users: true,
+                      },
+                  });
+
+        return res;
     }
 
     async getInvite({ id }: User) {
