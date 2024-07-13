@@ -6,6 +6,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { FirebaseService } from 'src/common/modules/firebase/firebase.service';
 import { PrismaService } from 'src/common/modules/prisma/prisma.service';
 
+import { AddressService } from '../address/address.service';
 import { CreatePlanDTO } from './dto/create-plan.dto';
 import { PlanResponseDTO } from './dto/plan-response.dto';
 
@@ -14,6 +15,7 @@ export class PlanService {
     constructor(
         private readonly prisma: PrismaService,
         private readonly firebase: FirebaseService,
+        private readonly addressService: AddressService,
     ) {}
 
     async getPlan(user: User) {
@@ -27,6 +29,7 @@ export class PlanService {
             },
             include: {
                 users: true,
+                place: true,
             },
         });
 
@@ -46,7 +49,6 @@ export class PlanService {
         });
 
         if (!user) return;
-
         if (user.Plan) throw new HttpException('User already has a plan', HttpStatus.BAD_GATEWAY);
 
         await this.prisma.invite.deleteMany({
@@ -55,17 +57,29 @@ export class PlanService {
             },
         });
 
+        const place = await this.addressService.getAddressByKeyword(dto.address);
+
         return await this.prisma.plan.create({
             data: {
-                ...dto,
+                date: dto.date,
+                name: dto.name,
                 users: {
                     connect: {
                         id,
                     },
                 },
+                place: {
+                    create: {
+                        address: dto.address,
+                        name: place.documents[0].place_name,
+                        x: place.documents[0].x,
+                        y: place.documents[0].y,
+                    },
+                },
             },
             include: {
                 users: true,
+                place: true,
             },
         });
     }
@@ -101,6 +115,7 @@ export class PlanService {
                       },
                       include: {
                           users: true,
+                          place: true,
                       },
                   })
                 : await this.prisma.plan.update({
@@ -116,6 +131,7 @@ export class PlanService {
                       },
                       include: {
                           users: true,
+                          place: true,
                       },
                   });
 

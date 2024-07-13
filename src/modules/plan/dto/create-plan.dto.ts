@@ -1,9 +1,8 @@
-import { Prisma } from '@prisma/client';
 import { IsString } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreatePlanDTO implements Prisma.PlanCreateInput {
+export class CreatePlanDTO {
     @ApiProperty({
         example: '개학전밤샘등교팟',
     })
@@ -11,10 +10,10 @@ export class CreatePlanDTO implements Prisma.PlanCreateInput {
     name: string;
 
     @ApiProperty({
-        example: '선린인터넷고등학교',
+        example: '서울 용산구 청파동3가 131-2',
     })
     @IsString()
-    place: string;
+    address: string;
 
     @ApiProperty({
         example: '2017-03-16T17:40:00',

@@ -38,11 +38,21 @@ model UserProfileImage {
 model Plan {
   id        String   @id @default(uuid())
   name      String
-  place     String
   date      String
+  place     Place?
   users     User[]
   Invite    Invite[]
   createdAt DateTime @default(now())
+}
+
+model Place {
+  id      String @id @default(uuid())
+  name    String
+  address String
+  x       String
+  y       String
+  planId  String @unique
+  Plan    Plan   @relation(fields: [planId], references: [id])
 }
 
 enum InviteStatus {

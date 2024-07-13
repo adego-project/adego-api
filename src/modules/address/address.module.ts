@@ -8,5 +8,6 @@ import { AddressService } from './address.service';
     imports: [HttpModule],
     controllers: [AddressController],
     providers: [AddressService],
+    exports: [AddressService],
 })
 export class AddressModule {}
