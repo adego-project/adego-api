@@ -40,7 +40,6 @@ export class UserController {
     })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     async updateUser(@CurrentUser() user: User, @Body() data: UpdateUserDTO): Promise<ResponseDTO<null>> {
-        console.log(data);
         try {
             await this.userService.updateUserById(user.id, data);
             return { status: 'success', data: null };
