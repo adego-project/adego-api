@@ -23,10 +23,10 @@ export class LocationService {
     async getParticipantsLocation(user: User): Promise<Record<string, LocationDTO>> {
         const plan = await this.planService.getPlan(user);
 
-        const locations = {};
-        plan.users.map(async (user) => 
-            locations[user.id] = await this.getLocationById(user.id)
-        );
+        let locations = {};
+        for (const user of plan.users) {
+            locations[user.id] = await this.getLocationById(user.id);
+        }
 
         return locations;
     }
