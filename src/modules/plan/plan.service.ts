@@ -2,6 +2,7 @@ import { InviteStatus, Plan, PlanStatus, User } from '@prisma/client';
 import { DateTime } from 'luxon';
 
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 import { FirebaseService } from 'src/common/modules/firebase/firebase.service';
 import { PrismaService } from 'src/common/modules/prisma/prisma.service';
@@ -277,6 +278,7 @@ export class PlanService {
         return true;
     }
 
+    @Cron(CronExpression.EVERY_MINUTE)
     async sendAlarmAuto() {
         const plans = await this.prisma.plan.findMany({
             where: {
