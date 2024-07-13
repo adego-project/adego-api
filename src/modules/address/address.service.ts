@@ -24,6 +24,6 @@ export class AddressService {
             headers: { Authorization: `KakaoAK ${this.apiKey}` },
         });
 
-        return { documents: res.data.documents.sort() };
+        return { documents: res.data.documents.sort((a, b) => a.place_name.localeCompare(b.place_name)) };
     }
 }
