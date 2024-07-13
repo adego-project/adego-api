@@ -22,6 +22,7 @@ export class UserService {
     async updateUserById(id: string, data: Prisma.UserUpdateInput) {
         const user = await this.prisma.user.findUnique({ where: { id } });
         if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        console.log(data);
 
         await this.prisma.user.update({
             where: { id },
