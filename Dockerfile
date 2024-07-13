@@ -2,7 +2,6 @@
 FROM node:20-alpine AS builder
 
 LABEL maintainer="https://suk.kr"
-ENV TZ=Asia/Seoul
 
 WORKDIR /app
 COPY . /app
