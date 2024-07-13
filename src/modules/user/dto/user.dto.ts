@@ -6,7 +6,9 @@ export class UserResponseDTO implements Partial<User> {
     @ApiProperty()
     id: string;
 
-    @ApiProperty()
+    @ApiProperty({
+        nullable: true,
+    })
     name: string;
 
     @ApiProperty({
