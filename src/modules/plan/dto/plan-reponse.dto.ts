@@ -21,4 +21,7 @@ export class PlanResponseDTO implements Plan {
         type: [UserResponseDTO],
     })
     users: User[];
+
+    @ApiProperty()
+    createdAt: Date;
 }

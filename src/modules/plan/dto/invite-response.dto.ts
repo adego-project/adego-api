@@ -5,4 +5,5 @@ export class InviteResponseDTO implements Invite {
     userId: string;
     planId: string;
     status: $Enums.InviteStatus;
+    createdAt: Date;
 }
