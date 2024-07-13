@@ -39,6 +39,9 @@ export class PlanService {
     }
 
     async createPlan({ id }: User, dto: CreatePlanDTO): Promise<PlanResponseDTO> {
+        if (DateTime.fromISO(dto.date) < DateTime.now())
+            throw new HttpException('Invalid date', HttpStatus.BAD_REQUEST);
+
         const user = await this.prisma.user.findUnique({
             where: {
                 id,
