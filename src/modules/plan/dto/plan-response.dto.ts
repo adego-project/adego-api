@@ -6,7 +6,7 @@ import { UserResponseDTO } from 'src/modules/user/dto/user.dto';
 
 import { PlaceDTO } from './place.dto';
 
-export class PlanResponseDTO implements Plan {
+export class PlanResponseDTO implements Partial<Plan> {
     @ApiProperty()
     id: string;
 
@@ -25,6 +25,9 @@ export class PlanResponseDTO implements Plan {
         type: [UserResponseDTO],
     })
     users: User[];
+
+    @ApiProperty()
+    isAlarmAvailable: boolean;
 
     @ApiProperty()
     createdAt: Date;
