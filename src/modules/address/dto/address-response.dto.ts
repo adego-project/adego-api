@@ -18,6 +18,8 @@ export class AddressDocument {
 }
 
 export class AddressResponseDTO {
-    @ApiProperty()
+    @ApiProperty({
+        type: [AddressDocument],
+    })
     documents: AddressDocument[];
 }
