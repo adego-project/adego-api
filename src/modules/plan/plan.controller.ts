@@ -1,6 +1,8 @@
 import { User } from '@prisma/client';
+import { Request, Response } from 'express';
 
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Req, Res, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
@@ -13,7 +15,10 @@ import { PlanService } from './plan.service';
 @ApiTags('plan')
 @Controller('plan')
 export class PlanController {
-    constructor(private readonly planService: PlanService) {}
+    constructor(
+        private readonly planService: PlanService,
+        private readonly configService: ConfigService,
+    ) {}
 
     @Get()
     @ApiBearerAuth()
@@ -58,6 +63,22 @@ export class PlanController {
         return await this.planService.getInvite(user);
     }
 
+    @Get('invite/:inviteId')
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard('access'))
+    @ApiOperation({ summary: 'Deep link to plan invite' })
+    @ApiOkResponse({ description: 'Plan invite', type: PlanResponseDTO })
+    @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+    async getInviteById(@Req() req: Request, @Param('inviteId') inviteId: string, @Res() res: Response) {
+        if (req.headers['user-agent']?.toLocaleLowerCase().includes('kakaotalk')) {
+            return res.redirect(
+                `kakaotalk://web/openExternal?url=${this.configService.get<string>('BACKEND_URL')!}/plan/invite/${inviteId}`,
+            );
+        }
+
+        res.redirect(`adego-by-seogaemo://invite/${inviteId}`);
+    }
+
     @Post('invite/:userId')
     @ApiBearerAuth()
     @UseGuards(AuthGuard('access'))
@@ -68,7 +89,7 @@ export class PlanController {
         return await this.planService.inviteUser(user, userId);
     }
 
-    @Put('accept/:inviteId')
+    @Put('invite/:inviteId')
     @ApiBearerAuth()
     @UseGuards(AuthGuard('access'))
     @ApiOperation({ summary: 'Accept a plan invite' })
