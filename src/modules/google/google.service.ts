@@ -19,20 +19,14 @@ export class GoogleService {
 
     async login(dto: OAuthTokenDTO) {
         const googleUser = await this.getGoogleUser(dto.accessToken);
-        const id = `google_${googleUser.sub}`;
+        const user = await this.authService.findUserByProvider(AuthType.google, googleUser.sub);
 
-        const user = await this.prisma.findUserById(id);
+        if (!user)
+            return this.authService
+                .createUser(AuthType.google, googleUser.sub)
+                .then((registeredUser) => this.authService.createTokens(registeredUser.id));
 
-        if (!user) {
-            await this.prisma.userCreate({
-                id,
-                provider: AuthType.google,
-                providerId: googleUser.sub,
-                name: null,
-            });
-        }
-
-        return this.authService.createTokens(id);
+        return this.authService.createTokens(user.id);
     }
 
     async getGoogleUser(accessToken: string) {

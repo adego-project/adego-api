@@ -13,20 +13,14 @@ export class KakaoService {
 
     async login(dto: OAuthTokenDTO) {
         const kakaoUser = await this.getKakaoUser(dto.accessToken);
-        const id = `kakao_${kakaoUser.id}`;
+        const user = await this.authService.findUserByProvider(AuthType.kakao, kakaoUser.id.toString());
 
-        const user = await this.prisma.findUserById(id);
+        if (!user)
+            return this.authService
+                .createUser(AuthType.kakao, kakaoUser.id.toString())
+                .then((registeredUser) => this.authService.createTokens(registeredUser.id));
 
-        if (!user) {
-            await this.prisma.userCreate({
-                id,
-                provider: AuthType.kakao,
-                providerId: kakaoUser.id.toString(),
-                name: null,
-            });
-        }
-
-        return this.authService.createTokens(id);
+        return this.authService.createTokens(user.id);
     }
 
     async getKakaoUser(accessToken: string) {

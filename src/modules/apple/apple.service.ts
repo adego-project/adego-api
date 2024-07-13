@@ -18,20 +18,14 @@ export class AppleService {
 
     async login(dto: OAuthTokenDTO) {
         const appleUser = await this.getAppleUser(dto.accessToken);
-        const id = `apple_${appleUser.sub}`;
+        const user = await this.authService.findUserByProvider(AuthType.apple, appleUser.sub);
 
-        const user = await this.prisma.findUserById(id);
+        if (!user)
+            return this.authService
+                .createUser(AuthType.apple, appleUser.sub)
+                .then((registeredUser) => this.authService.createTokens(registeredUser.id));
 
-        if (!user) {
-            await this.prisma.userCreate({
-                id,
-                provider: AuthType.apple,
-                providerId: appleUser.sub,
-                name: null,
-            });
-        }
-
-        return this.authService.createTokens(id);
+        return this.authService.createTokens(user.id);
     }
 
     async getAppleUser(idToken: string) {
