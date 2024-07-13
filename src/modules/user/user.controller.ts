@@ -1,6 +1,6 @@
 import { Prisma, User } from '@prisma/client';
 
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Put, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
@@ -52,7 +52,7 @@ export class UserController {
         return await this.userService.updateUserById(user.id, data);
     }
 
-    @Post('/profile-image')
+    @Put('/profile-image')
     @UseGuards(AuthGuard('access'))
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Update user profile image' })
