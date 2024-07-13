@@ -2,7 +2,7 @@ import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
-import { RefreshResponseDTO } from 'src/common';
+import { OAuthResponseDTO } from 'src/common';
 
 import { AuthService } from './auth.service';
 
@@ -16,9 +16,9 @@ export class AuthController {
     // Swagger
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Access token refresh endpoint' })
-    @ApiOkResponse({ description: 'Access token refresh success', type: RefreshResponseDTO })
+    @ApiOkResponse({ description: 'Access token refresh success', type: OAuthResponseDTO })
     @ApiUnauthorizedResponse({ description: 'Unauthorized (토큰이 없음 / 잘못된 토큰 요청)' })
-    async refresh(@Req() req: any): Promise<RefreshResponseDTO> {
-        return { accessToken: await this.authService.createAccessToken(req.user.id) };
+    async refresh(@Req() req: any): Promise<OAuthResponseDTO> {
+        return await this.authService.createTokens(req.user.id);
     }
 }
