@@ -50,12 +50,10 @@ export class FirebaseService {
     }
 
     async sendNotificationByToken(notificationData: FCMTokenMessageModel) {
-        const message = await this.messageGenerator(notificationData);
-
         try {
             await admin
                 .messaging()
-                .send(message)
+                .send(await this.messageGenerator(notificationData))
                 .then((response) => {
                     console.log(
                         DateTime.now().toISO({ includeOffset: true }),
