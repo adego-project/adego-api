@@ -15,7 +15,7 @@ export class FirebaseService {
         });
     }
 
-    async messageGenerator({ token, title, body, data }: FCMTokenMessageModel): Promise<TokenMessage> {
+    async tokenMessageGenerator({ token, title, body, data }: FCMTokenMessageModel): Promise<TokenMessage> {
         const message: TokenMessage = {
             notification: {
                 title,
@@ -53,7 +53,7 @@ export class FirebaseService {
         try {
             await admin
                 .messaging()
-                .send(await this.messageGenerator(notificationData))
+                .send(await this.tokenMessageGenerator(notificationData))
                 .then((response) => {
                     console.log(
                         DateTime.now().toISO({ includeOffset: true }),
