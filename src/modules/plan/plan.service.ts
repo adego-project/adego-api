@@ -1,4 +1,5 @@
-import { InviteStatus, User } from '@prisma/client';
+import { InviteStatus, Plan, User } from '@prisma/client';
+import { DateTime } from 'luxon';
 
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
@@ -164,5 +165,22 @@ export class PlanService {
         });
 
         return invite.Plan;
+    }
+
+    async sendAlarm(user: User, plan: Plan, targetUserId: string) {
+        const targetUser = await this.prisma.user.findUnique({
+            where: {
+                id: targetUserId,
+            },
+        });
+
+        if (!targetUser) throw new HttpException('Target user not found', HttpStatus.NOT_FOUND);
+        if (targetUser.planId !== plan.id)
+            throw new HttpException('User is not in the same plan', HttpStatus.BAD_GATEWAY);
+
+        if (!(Math.abs(DateTime.fromISO(plan.date).diffNow('minutes').minutes) <= 30))
+            throw new HttpException('Plan is not in 30 minutes', HttpStatus.BAD_REQUEST);
+
+        // Send alarm
     }
 }
