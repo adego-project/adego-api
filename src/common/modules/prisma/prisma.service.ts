@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -12,20 +12,6 @@ export class PrismaService extends PrismaClient {
                     url: configService.get<string>('DATABASE_URL'),
                 },
             },
-        });
-    }
-
-    async findUserById(id: string) {
-        return this.user.findUnique({
-            where: {
-                id,
-            },
-        });
-    }
-
-    async userCreate(data: Prisma.UserCreateInput) {
-        return this.user.create({
-            data,
         });
     }
 }
