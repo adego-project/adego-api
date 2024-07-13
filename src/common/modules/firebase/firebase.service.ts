@@ -49,7 +49,7 @@ export class FirebaseService {
         return message;
     }
 
-    async sendNotificationByToken(notificationData: FCMTokenMessageModel) {
+    async sendNotificationByToken(notificationData: FCMTokenMessageModel): Promise<boolean> {
         try {
             await admin
                 .messaging()
@@ -62,8 +62,12 @@ export class FirebaseService {
                         response,
                     );
                 });
+
+            return true;
         } catch (error) {
             console.error('Error sending message:', error);
+
+            return false;
         }
     }
 }
