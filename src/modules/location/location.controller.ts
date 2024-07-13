@@ -2,7 +2,15 @@ import { User } from '@prisma/client';
 
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+    ApiBearerAuth,
+    ApiBody,
+    ApiNotFoundResponse,
+    ApiOkResponse,
+    ApiOperation,
+    ApiTags,
+    ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 import { CurrentUser } from 'src/common';
 
@@ -17,7 +25,7 @@ export class LocationController {
     @Get('participants')
     @ApiBearerAuth()
     @UseGuards(AuthGuard('access'))
-    @ApiOperation({ summary: "Get participants' locations"})
+    @ApiOperation({ summary: "Get participants' locations" })
     @ApiOkResponse({ description: 'Success', type: Boolean })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     @ApiNotFoundResponse({ description: 'Plan Not Found' })
