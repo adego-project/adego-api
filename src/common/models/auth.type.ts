@@ -1,4 +1,4 @@
-export enum AuthType {
+export const enum AuthType {
     kakao = 'kakao',
     google = 'google',
     apple = 'apple',
