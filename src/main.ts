@@ -10,8 +10,8 @@ async function bootstrap() {
     });
 
     const config = new DocumentBuilder()
-        .setTitle('ADEGO Auth')
-        .setDescription('ADEGO 인증 API 서버')
+        .setTitle('ADEGO API')
+        .setDescription('ADEGO API Server')
         .setVersion('1.0.0')
         .addBearerAuth()
         .build();
