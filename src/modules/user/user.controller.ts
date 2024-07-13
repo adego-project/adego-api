@@ -1,4 +1,4 @@
-import { Prisma, User } from '@prisma/client';
+import { User } from '@prisma/client';
 
 import { Body, Controller, Delete, Get, Param, Patch, Put, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -6,6 +6,7 @@ import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiTags, ApiUnauth
 
 import { CurrentUser, ResponseDTO } from 'src/common';
 
+import { UpdateUserFCMTokenDTO } from './dto/update-user-fcm.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { UploadProfileImageDTO } from './dto/upload-profile-image.dto';
 import { UserResponseDTO } from './dto/user.dto';
@@ -26,16 +27,6 @@ export class UserController {
         return await this.userService.findUserById(req.user.id);
     }
 
-    @Get('/:userId')
-    @UseGuards(AuthGuard('access'))
-    @ApiBearerAuth()
-    @ApiOperation({ summary: 'Get user information by id' })
-    @ApiOkResponse({ description: 'User information', type: UserResponseDTO })
-    @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-    async getUserById(@Param('userId') userId: string): Promise<UserResponseDTO> {
-        return await this.userService.findUserById(userId);
-    }
-
     @Patch('/')
     @UseGuards(AuthGuard('access'))
     @ApiBearerAuth()
@@ -48,7 +39,41 @@ export class UserController {
         type: ResponseDTO<null>,
     })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-    async updateUser(@CurrentUser() user: User, @Body() data: Prisma.UserUpdateInput): Promise<ResponseDTO<null>> {
+    async updateUser(@CurrentUser() user: User, @Body() data: UpdateUserDTO): Promise<ResponseDTO<null>> {
+        try {
+            await this.userService.updateUserById(user.id, data);
+            return { status: 'success', data: null };
+        } catch (error) {
+            return { status: 'error', data: null };
+        }
+    }
+
+    @Get('/:userId')
+    @UseGuards(AuthGuard('access'))
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Get user information by id' })
+    @ApiOkResponse({ description: 'User information', type: UserResponseDTO })
+    @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+    async getUserById(@Param('userId') userId: string): Promise<UserResponseDTO> {
+        return await this.userService.findUserById(userId);
+    }
+
+    @Put('/fcm')
+    @UseGuards(AuthGuard('access'))
+    @ApiBearerAuth()
+    @ApiBody({
+        type: UpdateUserFCMTokenDTO,
+    })
+    @ApiOperation({ summary: 'Update user FCM token' })
+    @ApiOkResponse({
+        description: 'User FCM token updated',
+        type: ResponseDTO<null>,
+    })
+    @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+    async updateUserFCMToken(
+        @CurrentUser() user: User,
+        @Body() data: UpdateUserFCMTokenDTO,
+    ): Promise<ResponseDTO<null>> {
         try {
             await this.userService.updateUserById(user.id, data);
             return { status: 'success', data: null };
