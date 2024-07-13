@@ -31,7 +31,7 @@ export class LocationController {
         type: LocationDTO,
     })
     @UseGuards(AuthGuard('access'))
-    @ApiOperation({ summary: 'Update User Location' })
+    @ApiOperation({ summary: 'Update User Location (WGS84)' })
     @ApiOkResponse({ description: 'Updated User Location', type: Boolean })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     async updateLocation(@CurrentUser() user: User, @Body() dto: LocationDTO) {
