@@ -2,13 +2,13 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class AddressDocument {
     @ApiProperty()
-    address_name: string;
+    addressName: string;
 
     @ApiProperty()
-    road_address_name: string;
+    roadAddressName: string;
 
     @ApiProperty()
-    place_name: string;
+    placeName: string;
 
     @ApiProperty()
     x: string;
