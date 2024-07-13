@@ -1,7 +1,8 @@
-import { InviteStatus, Plan, PlanStatus, User } from '@prisma/client';
+import { Plan, PlanStatus, User } from '@prisma/client';
 import { DateTime } from 'luxon';
 
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
 import { FirebaseService } from 'src/common/modules/firebase/firebase.service';
@@ -17,6 +18,7 @@ export class PlanService {
         private readonly prisma: PrismaService,
         private readonly firebase: FirebaseService,
         private readonly addressService: AddressService,
+        private readonly configService: ConfigService,
     ) {}
 
     async getPlan(user: User): Promise<PlanResponseDTO> {
@@ -39,7 +41,61 @@ export class PlanService {
         return { ...plan, isAlarmAvailable: await this.isAlarmAvailable(plan.date) };
     }
 
-    async createPlan({ id }: User, dto: CreatePlanDTO): Promise<PlanResponseDTO> {
+    async getInvite(inviteId: string) {
+        const invite = await this.prisma.invite.findUnique({
+            where: {
+                id: inviteId,
+            },
+            include: {
+                Plan: true,
+                User: true,
+            },
+        });
+
+        if (!invite) throw new HttpException('Invite not found', HttpStatus.NOT_FOUND);
+        if (!invite.Plan) throw new HttpException('Plan not found', HttpStatus.NOT_FOUND);
+
+        return invite;
+    }
+
+    getInviteLink(inviteId: string) {
+        return `${this.configService.get('BACKEND_URL')}/plan/invite/link/${inviteId}`;
+    }
+
+    async invite({ id }: User) {
+        const user = await this.prisma.user.findUnique({
+            where: {
+                id,
+            },
+            include: {
+                Plan: true,
+                Invite: true,
+            },
+        });
+
+        if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        if (!user.Plan) throw new HttpException('User does not have a plan', HttpStatus.BAD_GATEWAY);
+        if (user.Invite) return this.getInviteLink(user.Invite.id);
+
+        const invite = await this.prisma.invite.create({
+            data: {
+                Plan: {
+                    connect: {
+                        id: user.Plan.id,
+                    },
+                },
+                User: {
+                    connect: {
+                        id,
+                    },
+                },
+            },
+        });
+
+        return this.getInviteLink(invite.id);
+    }
+
+    async createPlan({ id }: User, dto: CreatePlanDTO) {
         if (DateTime.fromISO(dto.date) < DateTime.now())
             throw new HttpException('Invalid date', HttpStatus.BAD_REQUEST);
 
@@ -54,12 +110,6 @@ export class PlanService {
 
         if (!user) return;
         if (user.Plan) throw new HttpException('User already has a plan', HttpStatus.BAD_GATEWAY);
-
-        await this.prisma.invite.deleteMany({
-            where: {
-                userId: id,
-            },
-        });
 
         const place = await this.addressService.getAddressByKeyword(dto.address);
 
@@ -145,106 +195,52 @@ export class PlanService {
         return { ...res, isAlarmAvailable: await this.isAlarmAvailable(res.date) };
     }
 
-    async getInvite({ id }: User) {
-        const invites = await this.prisma.invite.findMany({
-            where: {
-                userId: id,
-            },
-            include: {
-                Plan: true,
-            },
-        });
-
-        return invites;
-    }
-
-    async inviteUser({ id }: User, userId: string) {
+    async acceptInvite({ id }: User, inviteId: string) {
         const user = await this.prisma.user.findUnique({
             where: {
                 id,
             },
-            include: {
-                Plan: true,
-            },
         });
 
         if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-        if (!user.Plan) throw new HttpException('User does not have a plan', HttpStatus.BAD_GATEWAY);
 
-        const targetUser = await this.prisma.user.findUnique({
-            where: {
-                id: userId,
-            },
-            include: {
-                Plan: true,
-            },
-        });
-
-        if (!targetUser) throw new HttpException('Target user not found', HttpStatus.NOT_FOUND);
-        if (targetUser.planId) throw new HttpException('Target user already has a plan', HttpStatus.BAD_GATEWAY);
-
-        return await this.prisma.invite.create({
-            data: {
-                userId: userId,
-                planId: user.planId,
-                status: InviteStatus.PENDING,
-            },
-        });
-    }
-
-    async acceptInvite({ id }: User, inviteId: string) {
         const invite = await this.prisma.invite.findUnique({
             where: {
                 id: inviteId,
             },
-            include: {
-                Plan: true,
-                User: true,
-            },
         });
 
         if (!invite) throw new HttpException('Invite not found', HttpStatus.NOT_FOUND);
-        if (invite.userId !== id) throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
 
-        await this.prisma.user.update({
+        const plan = await this.prisma.plan.findUnique({
             where: {
-                id,
+                id: invite.planId,
+            },
+            include: {
+                users: true,
+            },
+        });
+
+        if (!plan) throw new HttpException('Plan not found', HttpStatus.NOT_FOUND);
+        if (plan.users.some((u) => u.id === id))
+            throw new HttpException('User is already in the plan', HttpStatus.BAD_GATEWAY);
+
+        return await this.prisma.plan.update({
+            where: {
+                id: plan.id,
             },
             data: {
-                planId: invite.planId,
-            },
-        });
-
-        await this.prisma.invite.deleteMany({
-            where: {
-                userId: id,
-            },
-        });
-
-        return invite.Plan;
-    }
-
-    async rejectInvite({ id }: User, inviteId: string) {
-        const invite = await this.prisma.invite.findUnique({
-            where: {
-                id: inviteId,
+                users: {
+                    connect: {
+                        id,
+                    },
+                },
             },
             include: {
-                Plan: true,
-                User: true,
+                users: true,
+                place: true,
             },
         });
-
-        if (!invite) throw new HttpException('Invite not found', HttpStatus.NOT_FOUND);
-        if (invite.userId !== id) throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-
-        await this.prisma.invite.delete({
-            where: {
-                id: inviteId,
-            },
-        });
-
-        return invite.Plan;
     }
 
     async isAlarmAvailable(date: string) {

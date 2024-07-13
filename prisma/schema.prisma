@@ -22,10 +22,10 @@ model User {
   UserProfileImage UserProfileImage[]
   planId           String?
   Plan             Plan?              @relation(fields: [planId], references: [id])
-  Invite           Invite[]
   FCMToken         String?
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @default(now()) @updatedAt
+  Invite           Invite?
 }
 
 model UserProfileImage {
@@ -61,18 +61,11 @@ model Place {
   Plan    Plan   @relation(fields: [planId], references: [id])
 }
 
-enum InviteStatus {
-  PENDING
-  ACCEPTED
-  REJECTED
-}
-
 model Invite {
-  id        String       @id @default(uuid())
-  userId    String
-  User      User         @relation(fields: [userId], references: [id])
+  id        String   @id @default(uuid())
   planId    String
-  Plan      Plan         @relation(fields: [planId], references: [id])
-  status    InviteStatus
-  createdAt DateTime     @default(now())
+  Plan      Plan     @relation(fields: [planId], references: [id])
+  userId    String   @unique
+  User      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
 }
