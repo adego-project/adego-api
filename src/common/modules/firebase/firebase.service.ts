@@ -1,10 +1,11 @@
 import * as admin from 'firebase-admin';
-import { TopicMessage } from 'firebase-admin/lib/messaging/messaging-api';
+import { TokenMessage } from 'firebase-admin/lib/messaging/messaging-api';
+import { DateTime } from 'luxon';
 import * as serverAccount from 'secret/firebase.json';
 
 import { Injectable } from '@nestjs/common';
 
-import { TopicMessageDataModel } from './models/topic-data.model';
+import { FCMTokenMessageModel } from './models/token-data.model';
 
 @Injectable()
 export class FirebaseService {
@@ -14,37 +15,18 @@ export class FirebaseService {
         });
     }
 
-    async messageGenerator(
-        title: string,
-        body: string,
-        topic: string,
-        type: string,
-        data?: TopicMessageDataModel,
-    ): Promise<TopicMessage> {
-        if (!data)
-            data = {
-                title: title,
-                body: body,
-                type: type,
-            };
-        else {
-            data.title = title;
-            data.body = body;
-        }
-
-        const message: TopicMessage = {
+    async messageGenerator({ token, title, body, data }: FCMTokenMessageModel): Promise<TokenMessage> {
+        const message: TokenMessage = {
             notification: {
                 title,
                 body,
             },
-            topic,
+            token,
             data: data as unknown as { [key: string]: string },
             android: {
-                collapseKey: type,
                 priority: 'high',
-                ttl: 10 * 60 * 1000, // 10 minutes
+                ttl: 60 * 1000 * 30, // 30 minutes
                 notification: {
-                    tag: type === 'period' ? type : null,
                     priority: 'high',
                     sound: 'default',
                     channelId: 'high_importance_channel',
@@ -53,7 +35,7 @@ export class FirebaseService {
             apns: {
                 headers: {
                     'apns-priority': '10',
-                    'apns-expiration': '600', // 10 minutes
+                    'apns-expiration': (60 * 30).toString(), // 30 minutes
                 },
                 payload: {
                     aps: {
@@ -67,21 +49,20 @@ export class FirebaseService {
         return message;
     }
 
-    async sendNotificationByTopic(
-        type: string,
-        topic: string,
-        title: string,
-        body: string,
-        data?: TopicMessageDataModel,
-    ) {
-        const message = await this.messageGenerator(title, body, topic, type, data);
+    async sendNotificationByToken(notificationData: FCMTokenMessageModel) {
+        const message = await this.messageGenerator(notificationData);
 
         try {
             await admin
                 .messaging()
                 .send(message)
                 .then((response) => {
-                    console.log(new Date(), topic, body, response);
+                    console.log(
+                        DateTime.now().toISO({ includeOffset: true }),
+                        notificationData.token,
+                        notificationData.body,
+                        response,
+                    );
                 });
         } catch (error) {
             console.error('Error sending message:', error);
