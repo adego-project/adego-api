@@ -10,7 +10,7 @@ export class ParticipantsDTO {
             lat: '33.511111',
             lng: '126.492778',
         },
-        type: [LocationDTO],
+        type: LocationDTO,
     })
     @IsArray()
     'userid': LocationDTO;
