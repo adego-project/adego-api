@@ -14,6 +14,7 @@ import {
 
 import { CurrentUser } from 'src/common';
 
+import { ParticipantsDTO } from './dto/participants.dto';
 import { LocationDTO } from './dto/update.dto';
 import { LocationService } from './location.service';
 
@@ -26,7 +27,7 @@ export class LocationController {
     @ApiBearerAuth()
     @UseGuards(AuthGuard('access'))
     @ApiOperation({ summary: "Get participants' locations" })
-    @ApiOkResponse({ description: 'Success', type: Boolean })
+    @ApiOkResponse({ description: 'Success', type: ParticipantsDTO })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     @ApiNotFoundResponse({ description: 'Plan Not Found' })
     async getParticipantsLocation(@CurrentUser() user: User) {
