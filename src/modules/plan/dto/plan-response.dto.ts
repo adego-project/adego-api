@@ -1,4 +1,4 @@
-import { Place, Plan, User } from '@prisma/client';
+import { $Enums, Place, Plan, User } from '@prisma/client';
 
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -28,6 +28,11 @@ export class PlanResponseDTO implements Partial<Plan> {
 
     @ApiProperty()
     isAlarmAvailable: boolean;
+
+    @ApiProperty({
+        enum: $Enums.PlanStatus,
+    })
+    status?: $Enums.PlanStatus;
 
     @ApiProperty()
     createdAt: Date;
