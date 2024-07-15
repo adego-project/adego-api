@@ -6,7 +6,7 @@ import { LocationDTO } from './update.dto';
 
 export class ParticipantsDTO {
     @ApiProperty({
-        example: 'userid: LocationDTO[]',
+        example: '{lat: "33.511111", lng: "126.492778"}',
     })
     @IsArray()
     'userid': LocationDTO[];
