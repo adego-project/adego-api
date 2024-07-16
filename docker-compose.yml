@@ -14,5 +14,23 @@ services:
             - 49000:3000
         depends_on:
             - redis
+            - db
     redis:
         image: 'redis:7.2.5'
+    db:
+        image: mysql:8.0
+        ports:
+            - '3306:3306'
+        environment:
+        TZ: Asia/Seoul
+        env_file:
+            - .env.db
+        command:
+            - --default-authentication-plugin=mysql_native_password
+            - --character-set-server=utf8mb4
+            - --collation-server=utf8mb4_unicode_ci
+            - --range_optimizer_max_mem_size=16777216
+        restart: always
+        volumes:
+            - ./db/mysql/data:/var/lib/mysql
+            - ./db/mysql/init:/docker-entrypoint-initdb.d
