@@ -1,8 +1,8 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
-import { OAuthResponseDTO } from 'src/common';
+import { AuthType, OAuthResponseDTO } from 'src/common';
 
 import { AuthService } from './auth.service';
 
@@ -20,5 +20,14 @@ export class AuthController {
     @ApiUnauthorizedResponse({ description: 'Unauthorized (토큰이 없음 / 잘못된 토큰 요청)' })
     async refresh(@Req() req: any): Promise<OAuthResponseDTO> {
         return await this.authService.createTokens(req.user.id);
+    }
+
+    @Post('test-account')
+    @ApiOperation({ summary: 'Create test account' })
+    @ApiOkResponse({ description: 'Test account created', type: OAuthResponseDTO })
+    async createTestAccount(): Promise<OAuthResponseDTO> {
+        const user = await this.authService.createUser(AuthType.test);
+
+        return await this.authService.createTokens(user.id);
     }
 }

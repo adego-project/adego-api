@@ -15,12 +15,12 @@ export class AuthService {
         private readonly configService: ConfigService,
     ) {}
 
-    async createUser(provider: AuthType, providerId: string) {
+    async createUser(provider: AuthType, providerId?: string) {
         return await this.prisma.user.create({
             data: {
                 id: randomUUID(),
                 provider,
-                providerId,
+                providerId: providerId || randomUUID(),
             },
         });
     }
