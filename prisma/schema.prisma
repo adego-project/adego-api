@@ -21,7 +21,7 @@ model User {
   profileImage     String?
   UserProfileImage UserProfileImage[]
   planId           String?
-  Plan             Plan?              @relation(fields: [planId], references: [id])
+  Plan             Plan?              @relation(fields: [planId], references: [id], onDelete: SetNull)
   FCMToken         String?
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @default(now()) @updatedAt
