@@ -85,7 +85,7 @@ export class PlanController {
             );
         }
 
-        res.redirect(`adego-by-seogaemo://invite/${inviteId}`);
+        res.redirect(`adego-by-seogaemo://invite?id=${inviteId}`);
     }
 
     @Put('invite/:inviteId')
