@@ -243,6 +243,10 @@ export class PlanService {
         });
     }
 
+    async isExpired(date: string) {
+        return DateTime.fromISO(date).diffNow('minutes').minutes < -30;
+    }
+
     async isAlarmAvailable(date: string) {
         return Math.abs(DateTime.fromISO(date).diffNow('minutes').minutes) <= 30;
     }
@@ -302,6 +306,12 @@ export class PlanService {
                     },
                     data: {
                         status: PlanStatus.ALARMED,
+                    },
+                });
+            } else if (this.isExpired(plan.date)) {
+                await this.prisma.plan.delete({
+                    where: {
+                        id: plan.id,
                     },
                 });
             }
