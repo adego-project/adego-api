@@ -34,16 +34,13 @@ export class UserService {
     }
 
     async updateUserFCMTokenById(id: string, FCMToken: string) {
-        console.log('🚀 ~ UserService ~ updateUserFCMTokenById ~ FCMToken:', FCMToken);
         const user = await this.prisma.user.findUnique({ where: { id } });
         if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 
-        await this.prisma.user
-            .update({
-                where: { id },
-                data: { FCMToken },
-            })
-            .then((res) => console.log(res));
+        await this.prisma.user.update({
+            where: { id },
+            data: { FCMToken },
+        });
     }
 
     /**
