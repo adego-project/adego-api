@@ -1,4 +1,4 @@
-import { Plan, PlanStatus, User } from '@prisma/client';
+import { PlanStatus, User } from '@prisma/client';
 import { DateTime } from 'luxon';
 
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
@@ -255,7 +255,9 @@ export class PlanService {
         return Math.abs(DateTime.fromISO(date).diffNow('minutes').minutes) <= 30;
     }
 
-    async sendAlarmManual(user: User, plan: Plan, targetUserId: string) {
+    async sendAlarmManual(user: User, targetUserId: string) {
+        const plan = await this.getPlan(user);
+
         const targetUser = await this.prisma.user.findUnique({
             where: {
                 id: targetUserId,
@@ -265,8 +267,7 @@ export class PlanService {
         if (targetUser.planId !== plan.id)
             throw new HttpException('User is not in the same plan', HttpStatus.BAD_GATEWAY);
 
-        if (!this.isAlarmAvailable(plan.date))
-            throw new HttpException('Plan is not in 30 minutes', HttpStatus.BAD_REQUEST);
+        if (!plan.isAlarmAvailable) throw new HttpException('Plan is not in 30 minutes', HttpStatus.BAD_REQUEST);
 
         const targetUserFCMToken = targetUser.FCMToken;
         if (!targetUserFCMToken)
