@@ -1,7 +1,7 @@
 import { User } from '@prisma/client';
 import { Request, Response } from 'express';
 
-import { Body, Controller, Delete, Get, Param, Post, Put, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
@@ -96,5 +96,15 @@ export class PlanController {
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     async acceptInvite(@CurrentUser() user: User, @Param('inviteId') inviteId: string) {
         return await this.planService.acceptInvite(user, inviteId);
+    }
+
+    @Put('alert')
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard('access'))
+    @ApiOperation({ summary: 'Send plan alert for user' })
+    @ApiOkResponse({ description: 'Sent a plan alert' })
+    @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+    async sendAlert(@CurrentUser() user: User, @Query('target') target: string) {
+        return await this.planService.sendAlarmManual(user, target);
     }
 }
