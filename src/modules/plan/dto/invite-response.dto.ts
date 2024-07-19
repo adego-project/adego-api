@@ -21,7 +21,7 @@ export class InviteResponseDTO implements Invite {
     @ApiProperty({
         type: UserResponseDTO,
     })
-    User: User;
+    user: User;
 
     @ApiProperty()
     userId: string;
@@ -29,7 +29,7 @@ export class InviteResponseDTO implements Invite {
     @ApiProperty({
         type: PlanDTO,
     })
-    Plan: Plan;
+    plan: Plan;
 
     @ApiProperty()
     createdAt: Date;

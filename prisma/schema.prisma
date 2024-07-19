@@ -21,17 +21,17 @@ model User {
   profileImage     String?
   UserProfileImage UserProfileImage[]
   planId           String?
-  Plan             Plan?              @relation(fields: [planId], references: [id], onDelete: SetNull)
+  plan             Plan?              @relation(fields: [planId], references: [id], onDelete: SetNull)
   FCMToken         String?
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @default(now()) @updatedAt
-  Invite           Invite?
+  invite           Invite?
 }
 
 model UserProfileImage {
   url       String   @id
   userId    String
-  User      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }
 
@@ -47,7 +47,7 @@ model Plan {
   place     Place?
   status    PlanStatus @default(WAITING)
   users     User[]
-  Invite    Invite[]
+  invite    Invite[]
   createdAt DateTime   @default(now())
 }
 
@@ -58,14 +58,14 @@ model Place {
   x       String
   y       String
   planId  String @unique
-  Plan    Plan   @relation(fields: [planId], references: [id], onDelete: Cascade)
+  plan    Plan   @relation(fields: [planId], references: [id], onDelete: Cascade)
 }
 
 model Invite {
   id        String   @id @default(uuid())
   planId    String
-  Plan      Plan     @relation(fields: [planId], references: [id], onDelete: Cascade)
+  plan      Plan     @relation(fields: [planId], references: [id], onDelete: Cascade)
   userId    String   @unique
-  User      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }

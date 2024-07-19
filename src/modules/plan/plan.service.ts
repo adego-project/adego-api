@@ -47,13 +47,17 @@ export class PlanService {
                 id: inviteId,
             },
             include: {
-                Plan: true,
-                User: true,
+                plan: {
+                    include: {
+                        place: true,
+                    },
+                },
+                user: true,
             },
         });
 
         if (!invite) throw new HttpException('Invite not found', HttpStatus.NOT_FOUND);
-        if (!invite.Plan) throw new HttpException('Plan not found', HttpStatus.NOT_FOUND);
+        if (!invite.plan) throw new HttpException('Plan not found', HttpStatus.NOT_FOUND);
 
         return invite;
     }
@@ -68,23 +72,23 @@ export class PlanService {
                 id,
             },
             include: {
-                Plan: true,
-                Invite: true,
+                plan: true,
+                invite: true,
             },
         });
 
         if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-        if (!user.Plan) throw new HttpException('User does not have a plan', HttpStatus.BAD_GATEWAY);
-        if (user.Invite) return this.getInviteLink(user.Invite.id);
+        if (!user.plan) throw new HttpException('User does not have a plan', HttpStatus.BAD_GATEWAY);
+        if (user.invite) return this.getInviteLink(user.invite.id);
 
         const invite = await this.prisma.invite.create({
             data: {
-                Plan: {
+                plan: {
                     connect: {
-                        id: user.Plan.id,
+                        id: user.plan.id,
                     },
                 },
-                User: {
+                user: {
                     connect: {
                         id,
                     },
@@ -104,12 +108,12 @@ export class PlanService {
                 id,
             },
             select: {
-                Plan: true,
+                plan: true,
             },
         });
 
         if (!user) return;
-        if (user.Plan) throw new HttpException('User already has a plan', HttpStatus.BAD_GATEWAY);
+        if (user.plan) throw new HttpException('User already has a plan', HttpStatus.BAD_GATEWAY);
 
         const place = await this.addressService.getAddressByKeyword(dto.address);
 

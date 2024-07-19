@@ -47,7 +47,7 @@ export class UserService {
                 .create({
                     data: {
                         url,
-                        User: { connect: { id } },
+                        user: { connect: { id } },
                     },
                 })
                 .then(() =>
