@@ -104,7 +104,7 @@ export class PlanController {
     @ApiOperation({ summary: 'Send plan alert for user' })
     @ApiOkResponse({ description: 'Sent a plan alert' })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-    async sendAlert(@CurrentUser() user: User, @Query('target') target: string) {
+    async sendAlert(@CurrentUser() user: User, @Query('targetUserId') target: string) {
         return await this.planService.sendAlarmManual(user, target);
     }
 }
