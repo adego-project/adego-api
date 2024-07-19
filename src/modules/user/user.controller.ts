@@ -74,7 +74,6 @@ export class UserController {
         @CurrentUser() user: User,
         @Body() data: UpdateUserFCMTokenDTO,
     ): Promise<ResponseDTO<null>> {
-        console.log('🚀 ~ UserController ~ data:', data);
         await this.userService.updateUserFCMTokenById(user.id, data.FCMToken);
         return { status: 'success', data: null };
     }
