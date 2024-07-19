@@ -74,12 +74,8 @@ export class UserController {
         @CurrentUser() user: User,
         @Body() data: UpdateUserFCMTokenDTO,
     ): Promise<ResponseDTO<null>> {
-        try {
-            await this.userService.updateUserFCMTokenById(user.id, data.FCMToken);
-            return { status: 'success', data: null };
-        } catch (error) {
-            return { status: 'error', data: null };
-        }
+        await this.userService.updateUserFCMTokenById(user.id, data.FCMToken);
+        return { status: 'success', data: null };
     }
 
     @Put('/profile-image')
