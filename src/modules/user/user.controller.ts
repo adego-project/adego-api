@@ -75,7 +75,7 @@ export class UserController {
         @Body() data: UpdateUserFCMTokenDTO,
     ): Promise<ResponseDTO<null>> {
         try {
-            await this.userService.updateUserById(user.id, data);
+            await this.userService.updateUserFCMTokenById(user.id, data.FCMToken);
             return { status: 'success', data: null };
         } catch (error) {
             return { status: 'error', data: null };
