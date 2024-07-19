@@ -21,7 +21,15 @@ export class PlanService {
         private readonly configService: ConfigService,
     ) {}
 
-    async getPlan(user: User): Promise<PlanResponseDTO> {
+    async getPlan({ id }: User): Promise<PlanResponseDTO> {
+        const user = await this.prisma.user.findUnique({
+            where: {
+                id: id,
+            },
+        });
+
+        if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+
         const plan = await this.prisma.plan.findFirst({
             where: {
                 users: {
@@ -100,7 +108,7 @@ export class PlanService {
     }
 
     async createPlan({ id }: User, dto: CreatePlanDTO) {
-        if (DateTime.fromISO(dto.date).diffNow('minutes').minutes >= -30)
+        if (DateTime.fromISO(dto.date).diffNow('minutes').minutes <= -30)
             throw new HttpException('Invalid date', HttpStatus.BAD_REQUEST);
 
         const user = await this.prisma.user.findUnique({

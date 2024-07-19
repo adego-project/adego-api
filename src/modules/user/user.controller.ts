@@ -100,11 +100,7 @@ export class UserController {
     @ApiOkResponse({ description: 'User deleted', type: ResponseDTO<null> })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
     async deleteUser(@CurrentUser() user: User) {
-        try {
-            await this.userService.deleteUserById(user.id);
-            return { status: 'success', data: null };
-        } catch (error) {
-            return { status: 'error', data: null };
-        }
+        await this.userService.deleteUserById(user.id);
+        return { status: 'success', data: null };
     }
 }
