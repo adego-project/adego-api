@@ -12,8 +12,21 @@ export class UserService {
         private readonly s3: S3Service,
     ) {}
 
-    async findUserById(id: string) {
-        const user = await this.prisma.user.findUnique({ where: { id } });
+    async findUserById(id: string, userId?: string) {
+        const user = await this.prisma.user.findUnique({
+            where: {
+                id,
+                ...(userId
+                    ? {
+                          plan: {
+                              users: {
+                                  some: { id: userId },
+                              },
+                          },
+                      }
+                    : {}),
+            },
+        });
         if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 
         return user;

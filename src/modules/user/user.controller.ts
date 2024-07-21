@@ -1,6 +1,6 @@
 import { User } from '@prisma/client';
 
-import { Body, Controller, Delete, Get, Param, Patch, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Put, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
@@ -23,8 +23,8 @@ export class UserController {
     @ApiOperation({ summary: 'Get user information' })
     @ApiOkResponse({ description: 'User information', type: UserResponseDTO })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-    async getUser(@Req() req: any): Promise<UserResponseDTO> {
-        return await this.userService.findUserById(req.user.id);
+    async getUser(@CurrentUser() user: User): Promise<UserResponseDTO> {
+        return await this.userService.findUserById(user.id);
     }
 
     @Patch('/')
@@ -54,8 +54,8 @@ export class UserController {
     @ApiOperation({ summary: 'Get user information by id' })
     @ApiOkResponse({ description: 'User information', type: UserResponseDTO })
     @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-    async getUserById(@Param('userId') userId: string): Promise<UserResponseDTO> {
-        return await this.userService.findUserById(userId);
+    async getUserById(@CurrentUser() user: User, @Param('userId') userId: string): Promise<UserResponseDTO> {
+        return await this.userService.findUserById(userId, user.id);
     }
 
     @Put('/fcm')
