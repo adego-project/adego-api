@@ -255,11 +255,11 @@ export class PlanService {
         });
     }
 
-    async isExpired(date: string) {
+    isExpired(date: string) {
         return DateTime.fromISO(date).diffNow('minutes').minutes < -30;
     }
 
-    async isAlarmAvailable(date: string) {
+    isAlarmAvailable(date: string) {
         return Math.abs(DateTime.fromISO(date).diffNow('minutes').minutes) <= 30;
     }
 
@@ -294,9 +294,6 @@ export class PlanService {
     @Cron(CronExpression.EVERY_MINUTE)
     async sendAlarmAuto() {
         const plans = await this.prisma.plan.findMany({
-            where: {
-                status: PlanStatus.WAITING,
-            },
             include: {
                 users: true,
             },
@@ -305,6 +302,8 @@ export class PlanService {
         for (const plan of plans) {
             if (this.isAlarmAvailable(plan.date)) {
                 for (const user of plan.users) {
+                    if (plan.status === PlanStatus.ALARMED) continue;
+
                     const fcmRes = this.firebase.sendNotificationByToken({
                         title: '약속 시간이 얼마 남지 않았어요!',
                         body: '빨리 약속에 참석해주세요!',
