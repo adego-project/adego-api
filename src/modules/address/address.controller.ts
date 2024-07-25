@@ -17,6 +17,7 @@ export class AddressController {
     @ApiOperation({ summary: '주소 검색' })
     @ApiOkResponse({ description: '주소 검색 성공', type: AddressResponseDTO })
     async search(@Query('query') query: string): Promise<AddressResponseDTO> {
+        console.log('query', query);
         return await this.addressService.getSimilarAddress(query);
     }
 }
