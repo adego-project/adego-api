@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Logger, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 
@@ -17,7 +17,10 @@ export class AddressController {
     @ApiOperation({ summary: '주소 검색' })
     @ApiOkResponse({ description: '주소 검색 성공', type: AddressResponseDTO })
     async search(@Query('query') query: string): Promise<AddressResponseDTO> {
-        console.log('query', query);
+        const logger = new Logger('AddressController');
+
+        logger.log(`search query: ${query}`);
+
         return await this.addressService.getSimilarAddress(query);
     }
 }
