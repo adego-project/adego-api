@@ -1,29 +1,34 @@
-import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { json, urlencoded } from "body-parser";
 
-import { AppModule } from 'src/app';
+import { ValidationPipe } from "@nestjs/common";
+import { NestFactory } from "@nestjs/core";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+
+import { AppModule } from "src/app";
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule, {
-        logger: ['error', 'warn', 'log'],
-    });
+	const app = await NestFactory.create(AppModule, {
+		logger: ["error", "warn", "log"],
+	});
 
-    const config = new DocumentBuilder()
-        .setTitle('ADEGO API')
-        .setDescription('ADEGO API Server')
-        .setVersion('1.0.0')
-        .addBearerAuth()
-        .build();
-    const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('swagger', app, document);
+	app.use(json({ limit: "50mb" }));
+	app.use(urlencoded({ extended: true, limit: "50mb" }));
 
-    app.useGlobalPipes(
-        new ValidationPipe({
-            whitelist: true,
-        }),
-    );
+	const config = new DocumentBuilder()
+		.setTitle("ADEGO API")
+		.setDescription("ADEGO API Server")
+		.setVersion("1.0.0")
+		.addBearerAuth()
+		.build();
+	const document = SwaggerModule.createDocument(app, config);
+	SwaggerModule.setup("swagger", app, document);
 
-    await app.listen(3000);
+	app.useGlobalPipes(
+		new ValidationPipe({
+			whitelist: true,
+		}),
+	);
+
+	await app.listen(3000);
 }
 bootstrap();
