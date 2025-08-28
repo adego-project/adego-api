@@ -28,6 +28,10 @@ class EnvironmentVariables {
 
     @IsString()
     @IsNotEmpty()
+    S3_ENDPOINT: string;
+
+    @IsString()
+    @IsNotEmpty()
     S3_PUBLIC_URL: string;
 
     @IsString()
