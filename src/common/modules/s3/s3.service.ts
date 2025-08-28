@@ -11,6 +11,7 @@ export class S3Service {
     #S3PublicUrl = this.configService.get<string>('S3_PUBLIC_URL');
     #bucketName = this.configService.get<string>('S3_BUCKET_NAME');
     private readonly client = new S3Client({
+        endpoint: this.configService.get<string>('S3_ENDPOINT'),
         region: this.configService.get<string>('S3_REGION'),
         credentials: {
             accessKeyId: this.configService.get<string>('S3_ACCESS_KEY'),
