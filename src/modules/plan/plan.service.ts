@@ -263,7 +263,13 @@ export class PlanService {
         return Math.abs(DateTime.fromISO(date).diffNow('minutes').minutes) <= 30;
     }
 
-    async sendAlarmManual(user: User, targetUserId: string) {
+    async sendAlarmManual({ id }: User, targetUserId: string) {
+        const user = await this.prisma.user.findUnique({
+            where: {
+                id,
+            },
+        });
+        
         const plan = await this.getPlan(user);
 
         const targetUser = await this.prisma.user.findUnique({
